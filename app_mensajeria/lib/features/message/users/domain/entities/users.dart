@@ -1,11 +1,11 @@
-class Users {
+class User {
   final String telefono;
   final String informacion;
   final String foto;
   final String nombre;
   final String id;
 
-  Users({
+  User({
     required this.telefono,
     required this.informacion,
     required this.foto,
