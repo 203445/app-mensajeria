@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:app_mensajeria/styles.dart';
 
 class ValidationForm extends StatelessWidget {
   const ValidationForm({super.key});
@@ -14,7 +15,7 @@ class ValidationForm extends StatelessWidget {
             height: MediaQuery.of(context).size.height * 0.1,
             width: MediaQuery.of(context).size.width * 0.165,
             child: TextFormField(
-              onSaved: (pin1) {},
+              onSaved: (digit1) {},
               onChanged: (value) {
                 if (value.length == 1) {
                   FocusScope.of(context).nextFocus();
@@ -23,8 +24,8 @@ class ValidationForm extends StatelessWidget {
               decoration: InputDecoration(
                 filled: true,
                 fillColor: Theme.of(context).brightness == Brightness.dark
-                    ? const Color.fromARGB(255, 23, 23, 23)
-                    : const Color.fromARGB(255, 245, 245, 245),
+                    ? DarkModeColors.detailColor
+                    : LightModeColors.detailColor,
                 enabledBorder: OutlineInputBorder(
                   borderSide: const BorderSide(
                     color: Colors.transparent,
@@ -52,7 +53,7 @@ class ValidationForm extends StatelessWidget {
             height: MediaQuery.of(context).size.height * 0.1,
             width: MediaQuery.of(context).size.width * 0.15,
             child: TextFormField(
-              onSaved: (pin2) {},
+              onSaved: (digit2) {},
               onChanged: (value) {
                 if (value.length == 1) {
                   FocusScope.of(context).nextFocus();
@@ -61,8 +62,8 @@ class ValidationForm extends StatelessWidget {
               decoration: InputDecoration(
                 filled: true,
                 fillColor: Theme.of(context).brightness == Brightness.dark
-                    ? const Color.fromARGB(255, 23, 23, 23)
-                    : const Color.fromARGB(255, 245, 245, 245),
+                    ? DarkModeColors.detailColor
+                    : LightModeColors.detailColor,
                 enabledBorder: OutlineInputBorder(
                   borderSide: const BorderSide(
                     color: Colors.transparent,
@@ -90,7 +91,7 @@ class ValidationForm extends StatelessWidget {
             height: MediaQuery.of(context).size.height * 0.1,
             width: MediaQuery.of(context).size.width * 0.15,
             child: TextFormField(
-              onSaved: (pin3) {},
+              onSaved: (digit3) {},
               onChanged: (value) {
                 if (value.length == 1) {
                   FocusScope.of(context).nextFocus();
@@ -99,8 +100,8 @@ class ValidationForm extends StatelessWidget {
               decoration: InputDecoration(
                 filled: true,
                 fillColor: Theme.of(context).brightness == Brightness.dark
-                    ? const Color.fromARGB(255, 23, 23, 23)
-                    : const Color.fromARGB(255, 245, 245, 245),
+                    ? DarkModeColors.detailColor
+                    : LightModeColors.detailColor,
                 enabledBorder: OutlineInputBorder(
                   borderSide: const BorderSide(
                     color: Colors.transparent,
@@ -128,13 +129,13 @@ class ValidationForm extends StatelessWidget {
             height: MediaQuery.of(context).size.height * 0.1,
             width: MediaQuery.of(context).size.width * 0.15,
             child: TextFormField(
-              onSaved: (pin3) {},
+              onSaved: (digit4) {},
               onChanged: (value) {},
               decoration: InputDecoration(
                 filled: true,
                 fillColor: Theme.of(context).brightness == Brightness.dark
-                    ? const Color.fromARGB(255, 23, 23, 23)
-                    : const Color.fromARGB(255, 245, 245, 245),
+                    ? DarkModeColors.detailColor
+                    : LightModeColors.detailColor,
                 enabledBorder: OutlineInputBorder(
                   borderSide: const BorderSide(
                     color: Colors.transparent,

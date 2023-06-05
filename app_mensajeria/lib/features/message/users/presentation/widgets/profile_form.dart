@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:app_mensajeria/styles.dart';
 
 class ProfileForm extends StatefulWidget {
   const ProfileForm({super.key});
@@ -25,8 +26,8 @@ class _ProfileFormState extends State<ProfileForm> {
                 hintText: "Nombre",
                 filled: true,
                 fillColor: Theme.of(context).brightness == Brightness.dark
-                    ? const Color.fromARGB(255, 23, 23, 23)
-                    : const Color.fromARGB(255, 250, 250, 250),
+                    ? DarkModeColors.detailColor
+                    : LightModeColors.detailColor,
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
                 ),
@@ -38,8 +39,8 @@ class _ProfileFormState extends State<ProfileForm> {
                 hintText: "Información",
                 filled: true,
                 fillColor: Theme.of(context).brightness == Brightness.dark
-                    ? const Color.fromARGB(255, 23, 23, 23)
-                    : const Color.fromARGB(255, 250, 250, 250),
+                    ? DarkModeColors.detailColor
+                    : LightModeColors.detailColor,
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
                 ),
