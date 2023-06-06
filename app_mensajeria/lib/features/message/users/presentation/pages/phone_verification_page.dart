@@ -1,16 +1,23 @@
+import 'package:app_mensajeria/features/message/users/presentation/pages/create_profile.page.dart';
 import 'package:app_mensajeria/features/message/users/presentation/widgets/main_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:app_mensajeria/styles.dart';
+import 'package:pinput/pinput.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class PhoneVerificationPage extends StatefulWidget {
-  const PhoneVerificationPage({super.key});
+  final String verificationId;
+  const PhoneVerificationPage({super.key, required this.verificationId});
 
   @override
   State<PhoneVerificationPage> createState() => _PhoneVerificationPageState();
 }
 
 class _PhoneVerificationPageState extends State<PhoneVerificationPage> {
+  final TextEditingController pinController = TextEditingController();
+  final auth = FirebaseAuth.instance;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -67,63 +74,68 @@ class _PhoneVerificationPageState extends State<PhoneVerificationPage> {
                                 top: MediaQuery.of(context).size.height * 0.075,
                                 bottom:
                                     MediaQuery.of(context).size.height * 0.395),
-                            child: Form(
-                                child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: List.generate(4, (index) {
-                                      return SizedBox(
-                                        height:
-                                            MediaQuery.of(context).size.height *
-                                                0.1,
-                                        width:
-                                            MediaQuery.of(context).size.width *
-                                                0.165,
-                                        child: TextFormField(
-                                          //onSaved: () => {},
-                                          onChanged: (value) {
-                                            if (value.length == 1 &&
-                                                index < 4) {
-                                              FocusScope.of(context)
-                                                  .nextFocus();
-                                            }
-                                          },
-                                          decoration: InputDecoration(
-                                            filled: true,
-                                            fillColor: Theme.of(context)
-                                                        .brightness ==
-                                                    Brightness.dark
-                                                ? DarkModeColors.detailColor
-                                                : LightModeColors.detailColor,
-                                            enabledBorder: OutlineInputBorder(
-                                              borderSide: const BorderSide(
-                                                color: Colors.transparent,
-                                              ),
-                                              borderRadius:
-                                                  BorderRadius.circular(12),
-                                            ),
-                                            focusedBorder: OutlineInputBorder(
-                                              borderRadius:
-                                                  BorderRadius.circular(12),
-                                              borderSide: const BorderSide(
-                                                color: Color.fromARGB(
-                                                    255, 129, 78, 192),
-                                                width: 2.0,
-                                              ),
-                                            ),
-                                          ),
-                                          style: Theme.of(context)
-                                              .textTheme
-                                              .headline4,
-                                          keyboardType: TextInputType.number,
-                                          textAlign: TextAlign.center,
-                                          inputFormatters: [
-                                            LengthLimitingTextInputFormatter(1),
-                                            FilteringTextInputFormatter
-                                                .digitsOnly
-                                          ],
-                                        ),
-                                      );
-                                    }))),
+                            child: SizedBox(
+                              width: double.infinity,
+                              height:
+                                  MediaQuery.of(context).size.height * 0.125,
+                              child: Pinput(
+                                androidSmsAutofillMethod:
+                                    AndroidSmsAutofillMethod.none,
+                                controller: pinController,
+                                length: 6,
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                validator: (value) {
+                                  return value?.length == 6
+                                      ? null
+                                      : 'Por favor, completa los datos';
+                                },
+                                defaultPinTheme: PinTheme(
+                                    height: 70,
+                                    width: 55,
+                                    textStyle: const TextStyle(
+                                        fontSize: 22,
+                                        fontWeight: FontWeight.w600,
+                                        color: Colors.black54),
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(12),
+                                      boxShadow: const [
+                                        BoxShadow(
+                                          color: Color.fromARGB(
+                                              255, 168, 168, 168),
+                                          spreadRadius: 0.5,
+                                          blurRadius: 1,
+                                          offset: const Offset(0, 0.75),
+                                        )
+                                      ],
+                                      color: Color.fromARGB(255, 238, 238, 238),
+                                    )),
+                                focusedPinTheme: PinTheme(
+                                    height: 70,
+                                    width: 55,
+                                    textStyle: const TextStyle(
+                                        fontSize: 22,
+                                        fontWeight: FontWeight.w600,
+                                        color: Colors.black54),
+                                    decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(12),
+                                        boxShadow: const [
+                                          BoxShadow(
+                                            color: Color.fromARGB(
+                                                255, 168, 168, 168),
+                                            spreadRadius: 0.5,
+                                            blurRadius: 1,
+                                            offset: Offset(0, 0.5),
+                                          )
+                                        ],
+                                        color:
+                                            Color.fromARGB(255, 238, 238, 238),
+                                        border: Border.all(
+                                            color: Color.fromRGBO(
+                                                165, 105, 239, 1),
+                                            width: 2.0))),
+                              ),
+                            ),
                           ),
                           Padding(
                             padding: const EdgeInsets.symmetric(vertical: 15),
@@ -152,7 +164,51 @@ class _PhoneVerificationPageState extends State<PhoneVerificationPage> {
                               ],
                             ),
                           ),
-                          const MainButton(textButton: "Siguiente")
+
+                          SizedBox(
+                            width: double.infinity,
+                            height: MediaQuery.of(context).size.height * 0.08,
+                            child: OutlinedButton(
+                              //adaptar a función en datasource
+                                onPressed: () async {
+                                  final credential = PhoneAuthProvider.credential(
+                                    verificationId: widget.verificationId, 
+                                    smsCode: pinController.text.toString()
+                                  );
+
+                                  try {
+                                    await auth.signInWithCredential(credential);
+                                    Navigator.push(context, MaterialPageRoute(builder: (context) => CreateProfilePage()));
+                                  } catch (e) {
+                                    print(e);
+                                  }
+                                },
+                                style: OutlinedButton.styleFrom(
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(15),
+                                    ),
+                                    backgroundColor:
+                                        Theme.of(context).brightness ==
+                                                Brightness.dark
+                                            ? DarkModeColors.accentColor
+                                            : LightModeColors.accentColor,
+                                    side: BorderSide(
+                                        width: 1.5,
+                                        color: Theme.of(context).brightness ==
+                                                Brightness.dark
+                                            ? DarkModeColors.accentColor
+                                            : LightModeColors.accentColor),
+                                    elevation: 5),
+                                child: const Padding(
+                                  padding: EdgeInsets.only(
+                                      top: 20, bottom: 20),
+                                  child: Text(
+                                    "Siguiente",
+                                    style: TextStyle(
+                                        fontSize: 22, color: Color(0xFFF1F1F1)),
+                                  ),
+                                )),
+                          ),
                         ])),
               ),
             );

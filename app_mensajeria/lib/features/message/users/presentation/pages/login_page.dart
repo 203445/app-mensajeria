@@ -1,7 +1,9 @@
-import 'package:app_mensajeria/features/message/users/presentation/widgets/main_button.dart';
+import 'package:app_mensajeria/features/message/users/presentation/pages/phone_verification_page.dart';
 import 'package:flutter/material.dart';
 import 'package:intl_phone_field/intl_phone_field.dart';
 import 'package:app_mensajeria/styles.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -12,6 +14,29 @@ class LoginPage extends StatefulWidget {
 
 class _LoginPageState extends State<LoginPage> {
   final _formKey = GlobalKey<FormState>();
+  final auth = FirebaseAuth.instance;   //eliminar
+  late String? phoneValue = "";
+
+
+  //Cambiar a sendmessage
+  Future<void> logIn(String? phone) async {
+    auth.verifyPhoneNumber(
+      phoneNumber: phone, 
+      verificationCompleted: (_){
+
+      }, 
+      verificationFailed: (e){
+        print(e.toString());
+      }, 
+      codeSent: (String verificationId, int? token){
+        Navigator.push(context, MaterialPageRoute(builder: (context) => PhoneVerificationPage(verificationId: verificationId,)));
+      }, 
+      codeAutoRetrievalTimeout: (e) {
+        print(e.toString());
+      }
+    );
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -34,8 +59,8 @@ class _LoginPageState extends State<LoginPage> {
                         children: [
                           Image.asset(
                             Theme.of(context).brightness == Brightness.dark
-                                ? "assets/img/Logo_darkmode.png"
-                                : "assets/img/Logo_lightmode.png",
+                                ? "assets/images/Logo_darkmode.png"
+                                : "assets/images/Logo_lightmode.png",
                             height: MediaQuery.of(context).size.height * 0.24,
                           ),
                           SizedBox(
@@ -93,14 +118,51 @@ class _LoginPageState extends State<LoginPage> {
                                     ),
                                   ),
                                   initialCountryCode: 'MX',
-                                  onChanged: (phone) {
-                                    print(phone.completeNumber);
+                                  onChanged:(value) {
+                                    setState(() {
+                                      phoneValue = value.completeNumber;
+                                    });
+                                    
                                   },
                                 ),
+                                
                               ),
                             ),
                           ),
-                          const MainButton(textButton: "Siguiente")
+
+                          SizedBox(
+                            width: double.infinity,
+                            height: MediaQuery.of(context).size.height * 0.08,
+                            child: OutlinedButton(
+                                onPressed: () async {
+                                  logIn(phoneValue);
+                                },
+                                style: OutlinedButton.styleFrom(
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(15),
+                                    ),
+                                    backgroundColor:
+                                        Theme.of(context).brightness ==
+                                                Brightness.dark
+                                            ? DarkModeColors.accentColor
+                                            : LightModeColors.accentColor,
+                                    side: BorderSide(
+                                        width: 1.5,
+                                        color: Theme.of(context).brightness ==
+                                                Brightness.dark
+                                            ? DarkModeColors.accentColor
+                                            : LightModeColors.accentColor),
+                                    elevation: 5),
+                                child: const Padding(
+                                  padding: EdgeInsets.only(
+                                      top: 20, bottom: 20),
+                                  child: Text(
+                                    "Siguiente",
+                                    style: TextStyle(
+                                        fontSize: 22, color: Color(0xFFF1F1F1)),
+                                  ),
+                                )),
+                          )
                         ])),
               ),
             );

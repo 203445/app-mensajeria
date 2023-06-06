@@ -1,12 +1,20 @@
 import 'package:app_mensajeria/features/message/users/domain/entities/users.dart';
 import 'package:app_mensajeria/features/message/users/domain/repositories/user_repository.dart';
 
-class SendMessageUseCase {
+class VerifyUserExistenceUseCase {
   final UserRepository userRepository;
+  User? user;
+  bool _userExists = false;
 
-  SendMessageUseCase(this.userRepository);
+  VerifyUserExistenceUseCase(this.userRepository);
 
   Future<bool> execute(String phone) async {
-    return await userRepository.sendMessage(phone);
+    user =  await userRepository.getUserbyPhone(phone);
+    
+    if(user != null) {
+      _userExists = true;
+    }
+
+    return _userExists;
   }
 }
