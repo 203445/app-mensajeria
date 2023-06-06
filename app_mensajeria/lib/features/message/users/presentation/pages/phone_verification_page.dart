@@ -93,45 +93,59 @@ class _PhoneVerificationPageState extends State<PhoneVerificationPage> {
                                 defaultPinTheme: PinTheme(
                                     height: 70,
                                     width: 55,
-                                    textStyle: const TextStyle(
+                                    textStyle: TextStyle(
                                         fontSize: 22,
                                         fontWeight: FontWeight.w600,
-                                        color: Colors.black54),
+                                        color: Theme.of(context).brightness ==
+                                            Brightness.dark
+                                        ? DarkModeColors.textColor
+                                        : LightModeColors.textColor),
                                     decoration: BoxDecoration(
                                       borderRadius: BorderRadius.circular(12),
-                                      boxShadow: const [
+                                      boxShadow: [
                                         BoxShadow(
-                                          color: Color.fromARGB(
+                                          color: Theme.of(context).brightness == Brightness.dark ?
+                                          Color.fromARGB(255, 24, 24, 24): const Color.fromARGB(
                                               255, 168, 168, 168),
                                           spreadRadius: 0.5,
                                           blurRadius: 1,
                                           offset: const Offset(0, 0.75),
                                         )
                                       ],
-                                      color: Color.fromARGB(255, 238, 238, 238),
+                                      color: Theme.of(context).brightness ==
+                                            Brightness.dark
+                                        ? DarkModeColors.detailColor
+                                        : LightModeColors.detailColor,
                                     )),
                                 focusedPinTheme: PinTheme(
                                     height: 70,
                                     width: 55,
-                                    textStyle: const TextStyle(
+                                    textStyle: TextStyle(
                                         fontSize: 22,
                                         fontWeight: FontWeight.w600,
-                                        color: Colors.black54),
+                                        color: Theme.of(context).brightness ==
+                                            Brightness.dark
+                                        ? DarkModeColors.textColor
+                                        : LightModeColors.textColor),
                                     decoration: BoxDecoration(
                                         borderRadius: BorderRadius.circular(12),
-                                        boxShadow: const [
+                                        boxShadow:  [
                                           BoxShadow(
-                                            color: Color.fromARGB(
-                                                255, 168, 168, 168),
+                                            color: Theme.of(context).brightness == Brightness.dark ?
+                                          Color.fromARGB(255, 24, 24, 24): const Color.fromARGB(
+                                              255, 168, 168, 168),
                                             spreadRadius: 0.5,
                                             blurRadius: 1,
-                                            offset: Offset(0, 0.5),
+                                            offset: const Offset(0, 0.5),
                                           )
                                         ],
                                         color:
-                                            Color.fromARGB(255, 238, 238, 238),
+                                            Theme.of(context).brightness ==
+                                            Brightness.dark
+                                        ? DarkModeColors.detailColor
+                                        : LightModeColors.detailColor,
                                         border: Border.all(
-                                            color: Color.fromRGBO(
+                                            color: const Color.fromRGBO(
                                                 165, 105, 239, 1),
                                             width: 2.0))),
                               ),

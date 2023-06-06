@@ -1,8 +1,12 @@
 import 'package:app_mensajeria/features/message/users/presentation/pages/login_page.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'features/message/users/presentation/bloc/users_bloc.dart';
 import 'firebase_options.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:app_mensajeria/usecase_config.dart';
+
+UsecaseConfig usecaseConfig = UsecaseConfig();
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -20,7 +24,18 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     const primaryColor = Colors.deepPurple;
 
-    return MaterialApp(
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider<UsersBloc>(
+            create: (BuildContext context) =>
+                UsersBloc(
+                  sendMessageUseCase: usecaseConfig.sendMessageUseCase!,
+                  verifyCodeUseCase: usecaseConfig.verifyCodeUseCase!
+                ),
+        ),
+        
+      ], 
+      child: MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(
         primarySwatch: primaryColor,
@@ -41,6 +56,7 @@ class MyApp extends StatelessWidget {
       ),
       themeMode: ThemeMode.system,
       home: const LoginPage(),
+    ),
     );
   }
 }
