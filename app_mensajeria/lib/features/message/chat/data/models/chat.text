@@ -4,18 +4,12 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 class ChatModel extends Chats {
   ChatModel({
-    //   required String mensaje,
-    // required User userEmisor,
-    // required User userReceptor
     required String id,
     required String userEmisorId,
     required String userReceptorId,
     required List<Map<String, dynamic>> messages,
     required String timestamp,
   }) : super(
-          // mensaje: mensaje,
-          // userEmisor: userEmisor,
-          // userReceptor: userReceptor
           id: id,
           userEmisorId: userEmisorId,
           userReceptorId: userReceptorId,
@@ -23,13 +17,6 @@ class ChatModel extends Chats {
           timestamp: timestamp
         );
 
-  // factory ChatModel.fromJson(Map<String, dynamic> json) {
-  //   return ChatModel(
-  //     mensaje: json['mensaje'],
-  //     userEmisor: json['emisor'],
-  //     userReceptor: json['receptor'],
-  //   );
-  // }
   factory ChatModel.fromJson(Map<String, dynamic> json) {
     return ChatModel(
       id: json['id'],
@@ -39,14 +26,6 @@ class ChatModel extends Chats {
       timestamp: json['timestamp']
     );
   }
-
-  // factory ChatModel.fromEntity(Chats chats) {
-  //   return ChatModel(
-  //     mensaje: chats.mensaje,
-  //     userEmisor: chats.userEmisor,
-  //     userReceptor: chats.userReceptor,
-  //   );
-  // }
 
   factory ChatModel.fromEntity(Chats chats) {
     return ChatModel(
@@ -82,12 +61,3 @@ class ChatModel extends Chats {
   }
 }
 
-
-  // Map<String, dynamic> toJson() {
-  //   return {
-  //     'mensaje': mensaje,
-  //     'emisor': userEmisor,
-  //     'receptor': userReceptor,
-  //   };
-  // }
-// }
