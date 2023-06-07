@@ -15,16 +15,24 @@ class UsersBloc extends Bloc<UsersEvent, UsersState> {
   final VerifyCodeUseCase verifyCodeUseCase;
 
   UsersBloc({required this.sendMessageUseCase, required this.verifyCodeUseCase}) : super(InitialState()){
-    on<UsersEvent>(event, emit) async {
+    on<UsersEvent>((event, emit) async {
       if (event is SendMesssage){
         try {
           emit(Loading());
-          bool response = await sendMessageUseCase.execute(event.phone);
-          emit(Loaded(response: response));
+          String? response = sendMessageUseCase.execute(event.phone);
+          emit(LoadedMsg(response: response!));
+        } catch (e) {
+           emit(Error(error: e.toString()));
+        }
+      } else if (event is SendVerification) {
+        try {
+          emit(Loading());
+          bool? response = verifyCodeUseCase.execute(event.id, event.code);
+          emit(VerifiedPhone(response: response));
         } catch (e) {
            emit(Error(error: e.toString()));
         }
       }
-    }
+    });
   }
 }

@@ -8,13 +8,13 @@ class UserRepositoryImp implements UserRepository {
   UserRepositoryImp({required this.userRemoteDataSource});
 
   @override
-  Future<bool> sendMessage(String phone) async {
-    return await userRemoteDataSource.sendMessage(phone);
+  String? sendMessage(String phone) {
+    return userRemoteDataSource.sendMessage(phone);
   }
 
   @override
-  Future<bool> verifyCode(String id, String code) async {
-    return await userRemoteDataSource.verifyCode(id, code);
+  bool verifyCode(String id, String code) {
+    return userRemoteDataSource.verifyCode(id, code);
   }
 
   @override

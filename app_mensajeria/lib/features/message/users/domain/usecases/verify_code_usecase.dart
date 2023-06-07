@@ -6,7 +6,7 @@ class VerifyCodeUseCase {
 
   VerifyCodeUseCase(this.userRepository);
 
-  Future<bool> execute(String id, String code) async {
-    return await userRepository.verifyCode(id, code);
+  bool execute(String id, String code) {
+    return userRepository.verifyCode(id, code);
   }
 }

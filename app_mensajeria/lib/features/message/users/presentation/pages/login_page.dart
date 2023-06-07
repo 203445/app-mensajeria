@@ -16,37 +16,24 @@ class LoginPage extends StatefulWidget {
 
 class _LoginPageState extends State<LoginPage> {
   final _formKey = GlobalKey<FormState>();
-  final auth = FirebaseAuth.instance; //eliminar
   late String? phoneValue = "";
-
-  //Cambiar a sendmessage
-  Future<void> logIn(String? phone) async {
-    auth.verifyPhoneNumber(
-        phoneNumber: phone,
-        verificationCompleted: (_) {},
-        verificationFailed: (e) {
-          print(e.toString());
-        },
-        codeSent: (String verificationId, int? token) {
-          Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (context) => PhoneVerificationPage(
-                        verificationId: verificationId,
-                      )));
-        },
-        codeAutoRetrievalTimeout: (e) {
-          print(e.toString());
-        });
-  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        backgroundColor: Theme.of(context).brightness == Brightness.dark
-            ? DarkModeColors.backgroundColor
-            : LightModeColors.backgroundColor,
-        body: BlocBuilder<UsersBloc, UsersState>(builder: (context, state) {
+      backgroundColor: Theme.of(context).brightness == Brightness.dark
+          ? DarkModeColors.backgroundColor
+          : LightModeColors.backgroundColor,
+      body: BlocBuilder<UsersBloc, UsersState>(builder: (context, state) {
+        if (state is Loading) {
+          return Center(
+            child: CircularProgressIndicator(
+              color: Theme.of(context).brightness == Brightness.dark
+                  ? DarkModeColors.accentColor
+                  : LightModeColors.accentColor,
+            ),
+          );
+        } else if (state is InitialState) {
           return Center(
             child: LayoutBuilder(builder:
                 (BuildContext context, BoxConstraints viewportConstrains) {
@@ -136,8 +123,11 @@ class _LoginPageState extends State<LoginPage> {
                               width: double.infinity,
                               height: MediaQuery.of(context).size.height * 0.08,
                               child: OutlinedButton(
-                                  onPressed: () async {
-                                    logIn(phoneValue);
+                                  onPressed: () {
+                                    if (phoneValue != null) {
+                                      context.read<UsersBloc>().add(
+                                          SendMesssage(phone: phoneValue!));
+                                    }
                                   },
                                   style: OutlinedButton.styleFrom(
                                       shape: RoundedRectangleBorder(
@@ -171,6 +161,36 @@ class _LoginPageState extends State<LoginPage> {
               );
             }),
           );
-        }));
+        } else if (state is LoadedMsg) {
+          return FutureBuilder(
+            future: Future.delayed(Duration(milliseconds: 350), () {
+              print(state.response);
+              if (state.response != "none") {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => PhoneVerificationPage(
+                            verificationId: state.response)));
+              }
+            }),
+            builder: (context, snapshot) {
+              return Center(
+                child: CircularProgressIndicator(
+                  color: Theme.of(context).brightness == Brightness.dark
+                      ? DarkModeColors.accentColor
+                      : LightModeColors.accentColor,
+                ),
+              );
+            },
+          );
+        } else if (state is Error) {
+          return Center(
+            child: Text(state.error, style: const TextStyle(color: Colors.red)),
+          );
+        } else {
+          return Container();
+        }
+      }),
+    );
   }
 }

@@ -6,7 +6,7 @@ class SendMessageUseCase {
 
   SendMessageUseCase(this.userRepository);
 
-  Future<bool> execute(String phone) async {
-    return await userRepository.sendMessage(phone);
+  String? execute(String phone) {
+    return userRepository.sendMessage(phone);
   }
 }

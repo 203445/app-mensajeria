@@ -3,12 +3,15 @@ import 'package:app_mensajeria/features/message/users/domain/entities/users.dart
 import 'package:app_mensajeria/features/message/users/data/models/user_model.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter/material.dart';
+
+import '../../presentation/pages/phone_verification_page.dart';
 
 final auth = FirebaseAuth.instance;
 
 abstract class UserRemoteDataSource {
-  Future<bool> sendMessage(String phone);
-  Future<bool> verifyCode(String id, String code);
+  String? sendMessage(String phone);
+  bool verifyCode(String id, String code);
   Future <entitie.User?> getUserbyPhone(String phone);
   Future <entitie.User> createProfile(entitie.User user);
   // Future <List<User>> getContacts(List<String> phones);
@@ -20,29 +23,39 @@ abstract class UserRemoteDataSource {
 
 class UserRemoteDataSourceImp implements UserRemoteDataSource {
   @override
-  Future<bool> sendMessage(String phone) async {
-    late bool sent = false;
-    auth.verifyPhoneNumber(
+  String? sendMessage(String phone) {
+    late String? verificationID;
+    late bool verificated = false;
+
+     auth.verifyPhoneNumber(
         phoneNumber: phone,
         verificationCompleted: (_) {},
         verificationFailed: (e) {
           print(e.toString());
         },
         codeSent: (String verificationId, int? token) {
-          sent = true;
+          print("\nFUNCIONAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\n");
+          verificationID = verificationId;
+          verificated = true;
         },
         codeAutoRetrievalTimeout: (e) {
           print(e.toString());
         });
-    return sent;
+
+    if (verificated){
+      return verificationID;
+    }
+    else {
+      return "none";
+    }
   }
 
   @override
-  Future<bool> verifyCode(String id, String code) async {
+  bool verifyCode(String id, String code) {
     late bool verificated = false;
     final credential = PhoneAuthProvider.credential(verificationId: id, smsCode: code);
     try {
-      await auth.signInWithCredential(credential);
+      auth.signInWithCredential(credential);
       verificated = true;
     } catch (e) {
       print(e);

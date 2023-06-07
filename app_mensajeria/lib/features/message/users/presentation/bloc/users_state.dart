@@ -10,9 +10,14 @@ class InitialState extends UsersState {}
 
 class Loading extends UsersState {}
 
-class Loaded extends UsersState {
+class LoadedMsg extends UsersState {
+  final String response;
+  LoadedMsg({required this.response});
+}
+
+class VerifiedPhone extends UsersState {
   final bool response;
-  Loaded({required this.response});
+  VerifiedPhone({required this.response});
 }
 
 class Error extends UsersState {
