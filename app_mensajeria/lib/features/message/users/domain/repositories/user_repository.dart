@@ -1,11 +1,12 @@
+import 'dart:io';
+
 import 'package:app_mensajeria/features/message/users/domain/entities/users.dart';
 
-abstract class UserRepository {
-  String? sendMessage(String phone);
-  bool verifyCode(String id, String code);
-  Future <User?> getUserbyPhone(String phone);
-  Future <User> createProfile(User user);
-  // Future <List<User>> getContacts(List<String> phones);
+abstract class UserRepository { 
+  Future<bool> verifyExistence(String email);
+  Future <User?> createProfile(String name, String data, File img, String email, String password);
+  Future <bool> addContact(String email, String id);
+  Future <void> getContacts(String id);
   // Future <void> logOut(String phone);
   // Future <void> updateProfile(User user);
   // Future <void> deleteUser(String phone);

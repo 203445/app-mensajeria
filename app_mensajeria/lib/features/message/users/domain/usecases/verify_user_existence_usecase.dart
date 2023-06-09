@@ -3,18 +3,10 @@ import 'package:app_mensajeria/features/message/users/domain/repositories/user_r
 
 class VerifyUserExistenceUseCase {
   final UserRepository userRepository;
-  User? user;
-  bool _userExists = false;
 
   VerifyUserExistenceUseCase(this.userRepository);
 
-  Future<bool> execute(String phone) async {
-    user =  await userRepository.getUserbyPhone(phone);
-    
-    if(user != null) {
-      _userExists = true;
-    }
-
-    return _userExists;
+  Future<bool> execute(String email) async {
+    return await userRepository.verifyExistence(email);
   }
 }

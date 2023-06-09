@@ -2,37 +2,39 @@ part of 'users_bloc.dart';
 
 abstract class UsersEvent {}
 
-class SendMesssage extends UsersEvent {
-  final String phone;
+class PageNavegation extends UsersEvent {}
 
-  SendMesssage({required this.phone});
+class Register extends UsersEvent {
+  final String email;
+  final String password;
+
+  Register({required this.email, required this.password});
 }
 
-class SendVerification extends UsersEvent {
+class AddContact extends UsersEvent {
+  final String email;
   final String id;
-  final String code;
 
-  SendVerification({required this.id, required this.code});
+  AddContact({required this.email, required this.id});
 }
 
-class GetNotes extends UsersEvent {}
+class GetContacts extends UsersEvent {
+  final String id;
 
-// class AddUser extends UsersEvent {
-//   final List<User> users;
+  GetContacts({required this.id});
+}
 
-//   AddNotes({required this.notes});
-// }
+class CreateProfile extends UsersEvent {
+  final String email;
+  final String password;
+  final String name;
+  final String data;
+  final File? img;
 
-// class UpdateNote extends NotesEvent {
-//   final Note note;
-
-//   UpdateNote({required this.note});
-// }
-
-// class DeleteNote extends NotesEvent {
-//   final Note note;
-
-//   DeleteNote({required this.note});
-// }
-
-//class GetNotesOffline extends NotesEvent {}
+  CreateProfile(
+      {required this.email,
+      required this.password,
+      required this.name,
+      required this.data,
+      required this.img});
+}

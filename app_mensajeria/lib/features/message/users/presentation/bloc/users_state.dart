@@ -4,20 +4,23 @@ abstract class UsersState {}
 
 class InitialState extends UsersState {}
 
-//class Updating extends UsersState {}
-
-//class Updated extends UsersState{}
-
 class Loading extends UsersState {}
 
-class LoadedMsg extends UsersState {
-  final String response;
-  LoadedMsg({required this.response});
+class LoadedPage extends UsersState {}
+
+class VerifiedUser extends UsersState {
+  final bool response;
+  VerifiedUser({required this.response});
 }
 
-class VerifiedPhone extends UsersState {
-  final bool response;
-  VerifiedPhone({required this.response});
+class UserCreated extends UsersState {
+  final User user;
+  UserCreated({required this.user});
+}
+
+class Logged extends UsersState {
+  final String logged;
+  Logged({required this.logged});
 }
 
 class Error extends UsersState {

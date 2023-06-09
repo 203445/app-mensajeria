@@ -29,8 +29,10 @@ class MyApp extends StatelessWidget {
         BlocProvider<UsersBloc>(
             create: (BuildContext context) =>
                 UsersBloc(
-                  sendMessageUseCase: usecaseConfig.sendMessageUseCase!,
-                  verifyCodeUseCase: usecaseConfig.verifyCodeUseCase!
+                  verifyUserExistenceUseCase : usecaseConfig.verifyUserExistenceUseCase!,
+                  createProfileUseCase: usecaseConfig.createProfileUseCase!,
+                  addContactUseCase: usecaseConfig.addContactUseCase!,
+                  getContactsUseCase: usecaseConfig.getContactsUseCase!
                 ),
         ),
         

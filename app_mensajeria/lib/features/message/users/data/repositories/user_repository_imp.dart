@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:app_mensajeria/features/message/users/domain/repositories/user_repository.dart';
 import 'package:app_mensajeria/features/message/users/domain/entities/users.dart';
 import 'package:app_mensajeria/features/message/users/data/datasources/user_remote.dart';
@@ -8,22 +10,23 @@ class UserRepositoryImp implements UserRepository {
   UserRepositoryImp({required this.userRemoteDataSource});
 
   @override
-  String? sendMessage(String phone) {
-    return userRemoteDataSource.sendMessage(phone);
+  Future<bool> verifyExistence(String email) async {
+    return await userRemoteDataSource.verifyExistence(email);
   }
 
   @override
-  bool verifyCode(String id, String code) {
-    return userRemoteDataSource.verifyCode(id, code);
+  Future<User?> createProfile(String name, String data, File img, String email, String password) async {
+    return await userRemoteDataSource.createProfile(name, data, img, email, password);
   }
 
   @override
-  Future<User?> getUserbyPhone(String phone) async {
-    return await userRemoteDataSource.getUserbyPhone(phone);
+  Future<bool> addContact(String email, String id) async {
+    return await userRemoteDataSource.addContact(email, id);
   }
 
   @override
-  Future<User> createProfile(User user) async {
-    return await createProfile(user);
+  Future<void> getContacts(String id) async {
+    await userRemoteDataSource.getContacts(id);
   }
+
 }

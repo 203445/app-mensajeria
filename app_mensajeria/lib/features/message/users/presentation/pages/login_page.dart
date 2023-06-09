@@ -1,9 +1,7 @@
 import 'package:app_mensajeria/features/message/users/presentation/bloc/users_bloc.dart';
-import 'package:app_mensajeria/features/message/users/presentation/pages/phone_verification_page.dart';
+import 'package:app_mensajeria/features/message/users/presentation/pages/create_profile.page.dart';
 import 'package:flutter/material.dart';
-import 'package:intl_phone_field/intl_phone_field.dart';
 import 'package:app_mensajeria/styles.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -16,7 +14,8 @@ class LoginPage extends StatefulWidget {
 
 class _LoginPageState extends State<LoginPage> {
   final _formKey = GlobalKey<FormState>();
-  late String? phoneValue = "";
+  final TextEditingController emailController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -33,7 +32,7 @@ class _LoginPageState extends State<LoginPage> {
                   : LightModeColors.accentColor,
             ),
           );
-        } else if (state is InitialState) {
+        } else if (state is LoadedPage) {
           return Center(
             child: LayoutBuilder(builder:
                 (BuildContext context, BoxConstraints viewportConstrains) {
@@ -55,14 +54,14 @@ class _LoginPageState extends State<LoginPage> {
                             ),
                             SizedBox(
                               width: double.infinity,
-                              height: MediaQuery.of(context).size.height * 0.12,
+                              height: MediaQuery.of(context).size.height * 0.10,
                               child: Column(
                                 mainAxisAlignment:
                                     MainAxisAlignment.spaceBetween,
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
-                                    "Ingresar",
+                                    "Registrarse",
                                     style: TextStyle(
                                         fontSize: 42,
                                         fontWeight: FontWeight.w700,
@@ -73,7 +72,7 @@ class _LoginPageState extends State<LoginPage> {
                                     textAlign: TextAlign.start,
                                   ),
                                   Text(
-                                    "Te enviaremos un código de verificación",
+                                    "Por favor, ingresa tus datos",
                                     style: TextStyle(
                                         fontSize: 20,
                                         fontWeight: FontWeight.w400,
@@ -90,33 +89,58 @@ class _LoginPageState extends State<LoginPage> {
                                   top: MediaQuery.of(context).size.height *
                                       0.045,
                                   bottom: MediaQuery.of(context).size.height *
-                                      0.105),
+                                      0.125),
                               child: Form(
                                 key: _formKey,
                                 child: SizedBox(
-                                  width: double.infinity,
-                                  height: MediaQuery.of(context).size.height *
-                                      0.150,
-                                  child: IntlPhoneField(
-                                    decoration: InputDecoration(
-                                      hintText: "Telefono",
-                                      filled: true,
-                                      fillColor: Theme.of(context).brightness ==
-                                              Brightness.dark
-                                          ? DarkModeColors.detailColor
-                                          : LightModeColors.detailColor,
-                                      border: OutlineInputBorder(
-                                        borderRadius: BorderRadius.circular(15),
-                                      ),
-                                    ),
-                                    initialCountryCode: 'MX',
-                                    onChanged: (value) {
-                                      setState(() {
-                                        phoneValue = value.completeNumber;
-                                      });
-                                    },
-                                  ),
-                                ),
+                                    width: double.infinity,
+                                    height: MediaQuery.of(context).size.height *
+                                        0.185,
+                                    child: Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceAround,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.center,
+                                      children: [
+                                        TextFormField(
+                                          controller: emailController,
+                                          decoration: InputDecoration(
+                                            prefixIcon: const Icon(Icons.email),
+                                            hintText: "Correo eléctronico",
+                                            filled: true,
+                                            fillColor: Theme.of(context)
+                                                        .brightness ==
+                                                    Brightness.dark
+                                                ? DarkModeColors.detailColor
+                                                : LightModeColors.detailColor,
+                                            border: OutlineInputBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(12),
+                                            ),
+                                          ),
+                                          style: const TextStyle(fontSize: 18),
+                                        ),
+                                        TextFormField(
+                                          controller: passwordController,
+                                          decoration: InputDecoration(
+                                            prefixIcon: const Icon(Icons.lock),
+                                            hintText: "Contraseña",
+                                            filled: true,
+                                            fillColor: Theme.of(context)
+                                                        .brightness ==
+                                                    Brightness.dark
+                                                ? DarkModeColors.detailColor
+                                                : LightModeColors.detailColor,
+                                            border: OutlineInputBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(12),
+                                            ),
+                                          ),
+                                          style: const TextStyle(fontSize: 18),
+                                          obscureText: true,
+                                        ),
+                                      ],
+                                    )),
                               ),
                             ),
                             SizedBox(
@@ -124,10 +148,9 @@ class _LoginPageState extends State<LoginPage> {
                               height: MediaQuery.of(context).size.height * 0.08,
                               child: OutlinedButton(
                                   onPressed: () {
-                                    if (phoneValue != null) {
-                                      context.read<UsersBloc>().add(
-                                          SendMesssage(phone: phoneValue!));
-                                    }
+                                    context.read<UsersBloc>().add(Register(
+                                        email: emailController.text,
+                                        password: passwordController.text));
                                   },
                                   style: OutlinedButton.styleFrom(
                                       shape: RoundedRectangleBorder(
@@ -161,31 +184,70 @@ class _LoginPageState extends State<LoginPage> {
               );
             }),
           );
-        } else if (state is LoadedMsg) {
-          return FutureBuilder(
-            future: Future.delayed(Duration(milliseconds: 350), () {
-              print(state.response);
-              if (state.response != "none") {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => PhoneVerificationPage(
-                            verificationId: state.response)));
-              }
-            }),
-            builder: (context, snapshot) {
-              return Center(
-                child: CircularProgressIndicator(
-                  color: Theme.of(context).brightness == Brightness.dark
-                      ? DarkModeColors.accentColor
-                      : LightModeColors.accentColor,
-                ),
-              );
-            },
-          );
+        } else if (state is VerifiedUser) {
+          return Center(
+              child: FutureBuilder(
+                  future: Future.delayed(Duration.zero, () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => CreateProfilePage(
+                                email: emailController.text,
+                                password: passwordController.text)));
+                  }),
+                  builder: (context, snapshot) {
+                    return Container();
+                  }));
         } else if (state is Error) {
           return Center(
-            child: Text(state.error, style: const TextStyle(color: Colors.red)),
+            child: Padding(
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 25, vertical: 100),
+              child: Column(
+                children: [
+                  SizedBox(
+                    width: double.infinity,
+                    height: MediaQuery.of(context).size.height * 0.175,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          "Ups, ha ocurrido un error",
+                          style: TextStyle(
+                              fontSize: 35,
+                              fontWeight: FontWeight.w700,
+                              color: Theme.of(context).brightness ==
+                                      Brightness.dark
+                                  ? DarkModeColors.textColorTitles
+                                  : LightModeColors.textColorTitles),
+                          textAlign: TextAlign.start,
+                        ),
+                        Text(
+                          "${state.error} Regresando a la página anterior...",
+                          style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.w400,
+                              color: Theme.of(context).brightness ==
+                                      Brightness.dark
+                                  ? DarkModeColors.textColor
+                                  : LightModeColors.textColor),
+                                  textAlign: TextAlign.start,
+                        )
+                      ],
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(top:70),
+                    child: CircularProgressIndicator(
+                      color: Theme.of(context).brightness == Brightness.dark
+                          ? DarkModeColors.accentColor
+                          : LightModeColors.accentColor,
+                    ),
+                  ),
+                ],
+              ),
+            ),
           );
         } else {
           return Container();

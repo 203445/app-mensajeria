@@ -1,77 +1,92 @@
+import 'dart:async';
 import 'dart:convert' as convert;
-import 'package:app_mensajeria/features/message/users/domain/entities/users.dart' as entitie;
+import 'dart:convert';
+import 'dart:io';
+import 'package:app_mensajeria/features/message/users/domain/entities/users.dart'
+    as ent;
 import 'package:app_mensajeria/features/message/users/data/models/user_model.dart';
+import 'package:dio/dio.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 
-import '../../presentation/pages/phone_verification_page.dart';
-
 final auth = FirebaseAuth.instance;
+final dio = Dio();
+
+String apiURI =
+    'https://4c08-2806-2f0-8161-f0b5-a031-1da5-4499-662e.ngrok-free.app';
 
 abstract class UserRemoteDataSource {
-  String? sendMessage(String phone);
-  bool verifyCode(String id, String code);
-  Future <entitie.User?> getUserbyPhone(String phone);
-  Future <entitie.User> createProfile(entitie.User user);
-  // Future <List<User>> getContacts(List<String> phones);
-  // Future <void> logOut(String phone);
-  // Future <void> createUser(User user);
-  // Future <void> updateUser(User user);
-  // Future <void> deleteUser(String phone);
+  Future<bool> verifyExistence(String email);
+  Future<ent.User?> createProfile(
+      String name, String data, File img, String email, String password);
+  Future <bool> addContact(String email, String id);
+  Future <void> getContacts(String id);
 }
 
 class UserRemoteDataSourceImp implements UserRemoteDataSource {
   @override
-  String? sendMessage(String phone) {
-    late String? verificationID;
-    late bool verificated = false;
+  Future<bool> verifyExistence(String email) async {
+    FormData formData = FormData.fromMap({
+      "email": email,
+    });
+    final response = await dio.get("$apiURI/users/db/", data: formData);
 
-     auth.verifyPhoneNumber(
-        phoneNumber: phone,
-        verificationCompleted: (_) {},
-        verificationFailed: (e) {
-          print(e.toString());
-        },
-        codeSent: (String verificationId, int? token) {
-          print("\nFUNCIONAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\n");
-          verificationID = verificationId;
-          verificated = true;
-        },
-        codeAutoRetrievalTimeout: (e) {
-          print(e.toString());
-        });
-
-    if (verificated){
-      return verificationID;
-    }
-    else {
-      return "none";
-    }
+    return response.data;
   }
 
   @override
-  bool verifyCode(String id, String code) {
-    late bool verificated = false;
-    final credential = PhoneAuthProvider.credential(verificationId: id, smsCode: code);
+  Future<ent.User?> createProfile(
+    String name, String data, File img, String email, String password) async {
+    late String firebaseId;
+
     try {
-      auth.signInWithCredential(credential);
-      verificated = true;
+      UserCredential userCredential =
+          await FirebaseAuth.instance.createUserWithEmailAndPassword(
+        email: email,
+        password: password,
+      );
+
+      firebaseId = userCredential.user!.uid.toString();
+      print(firebaseId);
+
+      FormData formData = FormData.fromMap({
+        "name": name,
+        "email": email,
+        "password": password,
+        "data": data,
+        "img": await MultipartFile.fromFile(img.path, filename: img.path.split("/").last),
+        "isLoged": "True",
+        "firebaseId": firebaseId,
+      });
+
+      final response = await dio.post("$apiURI/users/db/", data: formData);
+      if (response.statusCode == 200){
+        return ent.User(id: response.data['id'].toString(), name: response.data['name'].toString(), data: response.data['data'].toString(), img: response.data['img'].toString(), firebaseId: response.data['firebaseId'].toString());
+      }
     } catch (e) {
       print(e);
     }
-    return verificated;
+    return null;
   }
 
   @override
-  Future<entitie.User?> getUserbyPhone(String phone) {
-    // TODO: implement getUserbyPhone
-    throw UnimplementedError();
+  Future<bool> addContact(String email, String id) async {
+    FormData formData = FormData.fromMap({
+      "email": email,
+    });
+    final response = await dio.post("$apiURI/users/contacts/$id", data: formData);
+
+    return response.statusCode == 200 ? true : false;
   }
 
   @override
-  Future<entitie.User> createProfile(entitie.User user) {
-    // TODO: implement createProfile
-    throw UnimplementedError();
+  Future<void> getContacts(String id) async {
+    final response = await dio.get("$apiURI/users/contactsList/$id",);
+
+    if (response.statusCode == 200) {
+      print(response.data);
+    }
   }
+  
 }
