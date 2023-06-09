@@ -40,18 +40,18 @@ class _TestPageState extends State<TestPage> {
         } else if (state is LoadedPage) {
           return Center(
             child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: 25, vertical: 50),
-              child: Expanded(
+              padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 50),
+              child: Container(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text("Se ha creado el usuario"),
                     ElevatedButton(onPressed: () { 
-                      print("ID: ${widget.user.id}  Nombre: ${widget.user.name}  Informacion: ${widget.user.data}"); 
+                      print("ID: ${widget.user.id}  Nombre: ${widget.user.name}  Informacion: ${widget.user.data}  Firebase: ${widget.user.firebaseId}"); 
                       }, child: Text("Ver mis datos")
                     ),
                     ElevatedButton(onPressed: () { 
-                      context.read<UsersBloc>().add(AddContact(email: "test1@mail.com", id: widget.user.id));
+                      context.read<UsersBloc>().add(AddContact(email: "testcontact4@mail.com", id: widget.user.id));
                       }, child: Text("Test agregar contacto")
                     ),
                     ElevatedButton(onPressed: () { 
@@ -114,7 +114,50 @@ class _TestPageState extends State<TestPage> {
               ),
             ),
           );
-        } else {
+        } else if (state is LoadedFeed) {
+          return Center(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 40),
+              child: SafeArea(
+                child: Column(
+                  children: [
+                    Container(
+                      width: double.infinity,
+                      height: 650,
+                      child: ListView.separated(
+                      itemCount: state.contacts.length,
+                      itemBuilder: (BuildContext context, int index) {
+                        return Container(
+                          height: 100,
+                          width: double.infinity,
+                          color: Colors.blueGrey,
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                            Text(state.contacts[index].id),
+                            Text(state.contacts[index].name),
+                            Text(state.contacts[index].data),
+                            Text(state.contacts[index].firebaseId),
+                            Text(state.contacts[index].img)
+                            
+                          ]),
+                        );
+                      },
+                      separatorBuilder: (BuildContext context, int index) {
+                        return SizedBox(height: 10);
+                      },
+                    ),
+                    ),
+                    ElevatedButton(onPressed: () {
+                      context.read<UsersBloc>().add(ReturnPage());
+                    }, child: Text("Regresar"))
+                  ],
+                ),
+              ),
+            ),
+          );
+
+        }else {
           return Container();
         }
       }),

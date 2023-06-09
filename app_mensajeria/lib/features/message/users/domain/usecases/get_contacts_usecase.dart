@@ -6,7 +6,7 @@ class GetContactsUseCase {
 
   GetContactsUseCase(this.userRepository);
 
-  Future<void> execute(String id) async {
-    await userRepository.getContacts(id);
+  Future<List<User>> execute(String id) async {
+    return await userRepository.getContacts(id);
   }
 }

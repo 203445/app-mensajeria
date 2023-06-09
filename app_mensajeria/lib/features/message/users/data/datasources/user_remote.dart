@@ -14,14 +14,15 @@ final auth = FirebaseAuth.instance;
 final dio = Dio();
 
 String apiURI =
-    'https://4c08-2806-2f0-8161-f0b5-a031-1da5-4499-662e.ngrok-free.app';
+    'https://b7fd-177-244-61-246.ngrok-free.app';
 
 abstract class UserRemoteDataSource {
   Future<bool> verifyExistence(String email);
   Future<ent.User?> createProfile(
       String name, String data, File img, String email, String password);
   Future <bool> addContact(String email, String id);
-  Future <void> getContacts(String id);
+  Future <List<ent.User>> getContacts(String id);
+
 }
 
 class UserRemoteDataSourceImp implements UserRemoteDataSource {
@@ -81,12 +82,21 @@ class UserRemoteDataSourceImp implements UserRemoteDataSource {
   }
 
   @override
-  Future<void> getContacts(String id) async {
+  Future<List<ent.User>> getContacts(String id) async {
     final response = await dio.get("$apiURI/users/contactsList/$id",);
 
     if (response.statusCode == 200) {
-      print(response.data);
+      List<ent.User> contactsList = [];
+      var contacts = response.data['contacts'];
+
+      if (contacts.length > 0) {
+        for (var object in contacts) {
+          contactsList.add(ent.User(id: object['id'].toString(), name: object['name'].toString(), data: object['data'].toString(), img: object['img'].toString(), firebaseId: object['firebaseId'].toString()));
+        }
+      }
+      return contactsList;   
     }
+    return [];
   }
   
 }

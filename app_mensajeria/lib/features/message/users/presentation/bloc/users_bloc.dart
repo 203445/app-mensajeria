@@ -93,11 +93,18 @@ class UsersBloc extends Bloc<UsersEvent, UsersState> {
       else if (event is GetContacts){
         try {
           emit(Loading());
-          await getContactsUseCase.execute(event.id);
-          emit(LoadedPage());
+          final List<User> contacts = await getContactsUseCase.execute(event.id);
+          for (User contact in contacts) {
+            print("ID: ${contact.id}  Nombre: ${contact.name}  Informacion: ${contact.data}  Firebase: ${contact.firebaseId}"); 
+          }
+          emit(LoadedFeed(contacts: contacts));
         } catch (e) {
           emit(Error(error: e.toString()));
         }
+      }
+
+      else if (event is ReturnPage){
+        emit(LoadedPage());
       }
     });
   }

@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:app_mensajeria/features/message/users/data/models/user_model.dart';
 import 'package:app_mensajeria/features/message/users/domain/repositories/user_repository.dart';
 import 'package:app_mensajeria/features/message/users/domain/entities/users.dart';
 import 'package:app_mensajeria/features/message/users/data/datasources/user_remote.dart';
@@ -25,8 +26,8 @@ class UserRepositoryImp implements UserRepository {
   }
 
   @override
-  Future<void> getContacts(String id) async {
-    await userRemoteDataSource.getContacts(id);
+  Future<List<User>> getContacts(String id) async {
+    return await userRemoteDataSource.getContacts(id);
   }
 
 }

@@ -11,11 +11,11 @@ class UserModel extends User {
 
   factory UserModel.fromJson(Map<String, dynamic> json) {
     return UserModel(
-      data: json["data"],
-      img: json["img"],
-      name: json["name"],
-      id: json["id"],
-      firebaseId: json["firebaseId"],
+      data: json["data"].toString(),
+      img: json["img"].toString(),
+      name: json["name"].toString(),
+      id: json["id"].toString(),
+      firebaseId: json["firebaseId"].toString(),
     );
   }
 

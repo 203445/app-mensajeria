@@ -4,6 +4,8 @@ abstract class UsersEvent {}
 
 class PageNavegation extends UsersEvent {}
 
+class ReturnPage extends UsersEvent {}
+
 class Register extends UsersEvent {
   final String email;
   final String password;

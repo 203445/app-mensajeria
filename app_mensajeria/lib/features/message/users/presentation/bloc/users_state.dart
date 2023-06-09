@@ -8,6 +8,11 @@ class Loading extends UsersState {}
 
 class LoadedPage extends UsersState {}
 
+class LoadedFeed extends UsersState {
+  final List<User> contacts;
+  LoadedFeed({required this.contacts});
+}
+
 class VerifiedUser extends UsersState {
   final bool response;
   VerifiedUser({required this.response});
