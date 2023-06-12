@@ -18,19 +18,17 @@ void main() async {
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
-  
+
   @override
   Widget build(BuildContext context) {
     //  final uwu =  FirebaseFirestore.instance.collection('chats');
     //   final chatsRepository = ChatRepositoryImpl(chatRemoteDataSource: uwu!);
-    return Scaffold(
-      body: MaterialApp(
-        title: 'Flutter Demo',
-        theme: ThemeData(
-          primarySwatch: Colors.blue,
-        ),
-        home: AllChatsPage(),
+    return MaterialApp(
+      title: 'Flutter Demo',
+      theme: ThemeData(
+        primarySwatch: Colors.blue,
       ),
+      home: AllChatsPage(),
     );
   }
 }

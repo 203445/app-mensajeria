@@ -5,7 +5,7 @@ class SendMessageUseCase {
 
   SendMessageUseCase({required this.chatsRepository});
 
-  Future<void> execute(String chatId, String message) async {
-    await chatsRepository.sendMessage(chatId, message);
+  Future<void> execute(String chatId, String message, int type) async {
+    await chatsRepository.sendMessage(chatId, message, type);
   }
 }

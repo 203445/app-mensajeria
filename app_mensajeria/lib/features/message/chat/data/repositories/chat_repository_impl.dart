@@ -1,4 +1,7 @@
+import 'dart:io';
+
 import 'package:app_mensajeria/features/message/chat/data/datasources/chat_remote_data_source.dart';
+import 'package:app_mensajeria/features/message/chat/domain/entities/chats.dart';
 // import 'package:app_mensajeria/features/message/chat/domain/entities/chats.dart';
 import 'package:app_mensajeria/features/message/chat/domain/repositories/chats_repository.dart';
 // import 'package:cloud_firestore/cloud_firestore.dart';
@@ -21,12 +24,17 @@ class ChatRepositoryImpl implements ChatsRepository {
   }
 
   @override
-  Future<void> sendMessage(String chatId, String message) async {
-    return await chatRemoteDataSource.sendMessage(chatId, message);
+  Future<void> sendMessage(String chatId, String message, int type) async {
+    return await chatRemoteDataSource.sendMessage(chatId, message, type);
   }
 
   @override
-  Future<List<Map<String, dynamic>>> getMessage(String chatId) async {
+  Future<List<Message>> getMessage(String chatId) async {
     return await chatRemoteDataSource.getMessage(chatId);
+  }
+
+  @override
+  Future<String> uploadMedia(String path, File file) async {
+    return await chatRemoteDataSource.uploadMedia(path, file);
   }
 }
