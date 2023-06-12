@@ -113,8 +113,27 @@ class _ChatDetailPageState extends State<ChatDetailPage> {
   }
 
   void _sendMessage(Message message) async {
-    await widget.usecaseConfig.sendMessageUsecase!
-        .execute(widget.chatId, message.content, message.type as int);
+    MessageType messageType =
+        MessageType.text; // Valor predeterminado o tipo de mensaje
+
+    // Verificar el tipo de mensaje y asignar el valor correcto a 'messageType'
+    if (message.type == MessageType.image) {
+      messageType = MessageType.image;
+    } else if (message.type == MessageType.audio) {
+      messageType = MessageType.audio;
+    } else if (message.type == MessageType.video) {
+      messageType = MessageType.video;
+    } else if (message.type == MessageType.gif) {
+      messageType = MessageType.gif;
+    }
+
+    Message newMessage = Message(type: messageType, content: message.content);
+
+    await widget.usecaseConfig.sendMessageUsecase!.execute(
+      widget.chatId,
+      newMessage,
+      messageType.index,
+    );
     _messageController.clear();
     _loadMessages();
   }
@@ -162,8 +181,13 @@ class _ChatDetailPageState extends State<ChatDetailPage> {
     if (xFile != null) {
       String url = await widget.usecaseConfig.uploadMediaUseCase!
           .execute('images/${xFile.name}', File(xFile.path));
+      print(url);
       Message message = Message(type: MessageType.image, content: url);
       _sendMessage(message);
+
+      setState(() {
+        _image = url;
+      });
     }
   }
 
@@ -205,7 +229,12 @@ class _ChatDetailPageState extends State<ChatDetailPage> {
       case MessageType.text:
         return Text(message.content);
       case MessageType.image:
-        return Image.network(message.content);
+        return _image != null
+            ? Image.network(
+                _image!,
+                height: 200,
+              )
+            : Text('s');
       case MessageType.audio:
         return ElevatedButton(
           onPressed: () {
@@ -232,15 +261,18 @@ class _ChatDetailPageState extends State<ChatDetailPage> {
   }
 
   void _playAudio(String url) async {
-    XFile? xFile = await _imagePicker.pickVideo(source: ImageSource.gallery);
+    FilePickerResult? filePickerResult = await FilePicker.platform.pickFiles(
+      type: FileType.custom,
+      allowedExtensions: ['mp3', 'wav'], // Extensiones permitidas
+    );
 
-    if (xFile != null) {
-      String url = await widget.usecaseConfig.uploadMediaUseCase!
-          .execute('videos/${xFile.name}', File(xFile.path));
-      _videoPlayerController = VideoPlayerController.network(url)
-        ..initialize().then((_) {
-          setState(() {});
-        });
+    if (filePickerResult != null) {
+      String url = await widget.usecaseConfig.uploadMediaUseCase!.execute(
+          'videos/${filePickerResult.files.single.name}',
+          File(filePickerResult.files.single.path!));
+      setState(() {
+        _audio = url;
+      });
     }
   }
 
@@ -268,7 +300,7 @@ class _ChatDetailPageState extends State<ChatDetailPage> {
             child: ListView.builder(
               itemCount: _messages.length,
               itemBuilder: (BuildContext context, int index) {
-                return _buildMessageWidget(_messages[index] as Message);
+                return _buildMessageWidget(_messages[index]);
               },
             ),
           ),

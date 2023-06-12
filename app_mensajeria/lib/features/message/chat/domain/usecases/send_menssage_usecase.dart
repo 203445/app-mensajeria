@@ -1,3 +1,4 @@
+import 'package:app_mensajeria/features/message/chat/domain/entities/chats.dart';
 import 'package:app_mensajeria/features/message/chat/domain/repositories/chats_repository.dart';
 
 class SendMessageUseCase {
@@ -5,7 +6,7 @@ class SendMessageUseCase {
 
   SendMessageUseCase({required this.chatsRepository});
 
-  Future<void> execute(String chatId, String message, int type) async {
+  Future<void> execute(String chatId, Message message, int type) async {
     await chatsRepository.sendMessage(chatId, message, type);
   }
 }

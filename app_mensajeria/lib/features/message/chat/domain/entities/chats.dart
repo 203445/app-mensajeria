@@ -20,7 +20,7 @@ class Chats {
   final String userReceptorId;
   final List<Message> messages;
   final String timestamp;
-  final int type;
+  final MessageType type;
 
   Chats(
       {required this.id,

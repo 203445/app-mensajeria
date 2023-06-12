@@ -8,7 +8,7 @@ import 'package:firebase_storage/firebase_storage.dart';
 abstract class ChatRemoteDataSource {
   Future<List<ChatModel>> getChats();
   Future<void> createChat(ChatModel chat);
-  Future<void> sendMessage(String chatId, String message, int type);
+  Future<void> sendMessage(String chatId, Message message, int type);
   Future<List<Message>> getMessage(String chatId);
   Future<String> uploadMedia(String path, File file);
 }
@@ -32,13 +32,18 @@ class ChatRemoteDataSourceImp implements ChatRemoteDataSource {
   }
 
   @override
-  Future<void> sendMessage(String chatId, String message, int type) async {
+  Future<void> sendMessage(String chatId, Message message, int type) async {
     final chatRef = _chatsCollection.doc(chatId);
+    final messageData = {
+      'content': message.content,
+      'type': type,
+    };
     await chatRef.update({
-      'messages': FieldValue.arrayUnion([message])
+      'messages': FieldValue.arrayUnion([messageData])
     });
   }
 
+  @override
   Future<List<Message>> getMessage(String chatId) async {
     final chatRef = _chatsCollection.doc(chatId);
     final snapshot = await chatRef.get();
@@ -48,20 +53,39 @@ class ChatRemoteDataSourceImp implements ChatRemoteDataSource {
       final messagesData = chatData['messages'] as List<dynamic>;
       final List<Message> messages = [];
 
-      messagesData.forEach((value) {
-        final int messageType = chatData['type'];
-        final String messageContent = value.toString();
+      for (var value in messagesData) {
+        final int messageType = value['type'];
+        final dynamic messageContent = value['content'];
+
         final MessageType type = _getTypeFromValue(messageType);
 
         if (type != MessageType.unknown) {
-          messages.add(Message(type: type, content: messageContent));
+          final String representation =
+              _getRepresentation(type, messageContent);
+          messages.add(Message(type: type, content: representation));
         }
-      });
+      }
 
       return messages;
     }
 
     return [];
+  }
+
+  String _getRepresentation(MessageType type, dynamic content) {
+    if (type == MessageType.text) {
+      return content.toString(); // Mostrar el texto directamente
+    } else if (type == MessageType.image) {
+      return 'Imagen: $content'; // Mostrar un mensaje indicando que es una imagen
+    } else if (type == MessageType.gif) {
+      return 'GIF: $content'; // Mostrar un mensaje indicando que es un GIF
+    } else if (type == MessageType.audio) {
+      return 'Audio: $content'; // Mostrar un mensaje indicando que es un audio
+    } else if (type == MessageType.video) {
+      return 'Video: $content'; // Mostrar un mensaje indicando que es un video
+    } else {
+      return 'Mensaje desconocido'; // Mostrar un mensaje por defecto para tipos de mensaje desconocidos
+    }
   }
 
   MessageType _getTypeFromValue(int value) {

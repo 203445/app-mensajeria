@@ -5,7 +5,7 @@ import 'package:app_mensajeria/features/message/chat/domain/entities/chats.dart'
 abstract class ChatsRepository {
   Future<List<Chats>> getChats();
   Future<void> createChats(ChatModel chats);
-  Future<void> sendMessage(String chatId, String message, int type);
+  Future<void> sendMessage(String chatId, Message message, int type);
   Future<List<Message>> getMessage(String chatId);
   Future<String> uploadMedia(String path, File file);
 }

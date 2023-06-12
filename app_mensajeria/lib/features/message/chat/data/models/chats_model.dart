@@ -8,7 +8,7 @@ class ChatModel extends Chats {
     required String userReceptorId,
     required List<Message> messages,
     required String timestamp,
-    required int type,
+    required MessageType type,
   }) : super(
             id: id,
             userEmisorId: userEmisorId,
@@ -50,22 +50,67 @@ class ChatModel extends Chats {
     };
   }
 
+  // factory ChatModel.fromDocument(DocumentSnapshot doc) {
+  //   final data = doc.data() as Map<String, dynamic>;
+  //   final List<dynamic>? messagesData = data['messages'];
+  //   final List<Message> messages = messagesData != null
+  //       ? messagesData
+  //           .map((messageData) =>
+  //               Message(content: messageData, type: data['type']))
+  //           .toList()
+  //       : [];
+
+  //   return ChatModel(
+  //       id: doc.id,
+  //       userEmisorId: data['userEmisorId'],
+  //       userReceptorId: data['userReceptorId'],
+  //       messages: messages,
+  //       timestamp: data['timestamp'],
+  //       type: data['type']);
+  // }
+
   factory ChatModel.fromDocument(DocumentSnapshot doc) {
     final data = doc.data() as Map<String, dynamic>;
+    final List<dynamic>? messagesData = data['messages'];
+    final List<Message> messages = messagesData != null
+        ? messagesData
+            .map((messageData) => Message(
+                  content: messageData != null
+                      ? messageData['content'] as String
+                      : '', // Corrección aquí
+                  type: data['type'] != null
+                      ? _mapIntToMessageType(data['type'] as int)
+                      : MessageType.unknown,
+                ))
+            .toList()
+        : [];
+
     return ChatModel(
-        id: doc.id,
-        userEmisorId: data['userEmisorId'],
-        userReceptorId: data['userReceptorId'],
-        messages: List<Message>.from(data['messages']),
-        timestamp: data['timestamp'],
-        type: data['type']);
+      id: doc.id,
+      userEmisorId: data['userEmisorId'],
+      userReceptorId: data['userReceptorId'],
+      messages: messages,
+      timestamp: data['timestamp'],
+      type: data['type'] != null
+          ? _mapIntToMessageType(data['type'] as int)
+          : MessageType.unknown,
+    );
+  }
+
+  static MessageType _mapIntToMessageType(int type) {
+    switch (type) {
+      case 0:
+        return MessageType.text;
+      case 1:
+        return MessageType.image;
+      case 2:
+        return MessageType.audio;
+      case 3:
+        return MessageType.video;
+      case 4:
+        return MessageType.gif;
+      default:
+        return MessageType.unknown;
+    }
   }
 }
-
-// class TypeMessage {
-//   static const text = 0;
-//   static const image = 1;
-//   static const video = 2;
-//   static const audio = 3;
-//   static const gif = 4;
-// }
