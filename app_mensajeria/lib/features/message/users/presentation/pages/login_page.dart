@@ -1,5 +1,6 @@
 import 'package:app_mensajeria/features/message/users/presentation/bloc/users_bloc.dart';
 import 'package:app_mensajeria/features/message/users/presentation/pages/create_profile.page.dart';
+import 'package:app_mensajeria/features/message/users/presentation/widgets/error_view.dart';
 import 'package:flutter/material.dart';
 import 'package:app_mensajeria/styles.dart';
 
@@ -199,56 +200,7 @@ class _LoginPageState extends State<LoginPage> {
                     return Container();
                   }));
         } else if (state is Error) {
-          return Center(
-            child: Padding(
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 25, vertical: 100),
-              child: Column(
-                children: [
-                  SizedBox(
-                    width: double.infinity,
-                    height: MediaQuery.of(context).size.height * 0.175,
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          "Ups, ha ocurrido un error",
-                          style: TextStyle(
-                              fontSize: 35,
-                              fontWeight: FontWeight.w700,
-                              color: Theme.of(context).brightness ==
-                                      Brightness.dark
-                                  ? DarkModeColors.textColorTitles
-                                  : LightModeColors.textColorTitles),
-                          textAlign: TextAlign.start,
-                        ),
-                        Text(
-                          "${state.error} Regresando a la página anterior...",
-                          style: TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.w400,
-                              color: Theme.of(context).brightness ==
-                                      Brightness.dark
-                                  ? DarkModeColors.textColor
-                                  : LightModeColors.textColor),
-                                  textAlign: TextAlign.start,
-                        )
-                      ],
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(top:70),
-                    child: CircularProgressIndicator(
-                      color: Theme.of(context).brightness == Brightness.dark
-                          ? DarkModeColors.accentColor
-                          : LightModeColors.accentColor,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          );
+          return const ErrorView();
         } else {
           return Container();
         }

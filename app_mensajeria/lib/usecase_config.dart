@@ -3,6 +3,8 @@ import 'package:app_mensajeria/features/message/users/data/repositories/user_rep
 import 'package:app_mensajeria/features/message/users/domain/usecases/add_contact.dart';
 import 'package:app_mensajeria/features/message/users/domain/usecases/create_profile_usecase.dart';
 import 'package:app_mensajeria/features/message/users/domain/usecases/get_contacts_usecase.dart';
+import 'package:app_mensajeria/features/message/users/domain/usecases/get_user_usecase.dart';
+import 'package:app_mensajeria/features/message/users/domain/usecases/update_profile.dart';
 import 'package:app_mensajeria/features/message/users/domain/usecases/verify_user_existence_usecase.dart';
 
 import 'features/message/chat/domain/usecases/create_chats_usecase.dart';
@@ -14,6 +16,8 @@ class UsecaseConfig {
   CreateProfileUseCase? createProfileUseCase;
   AddContactUseCase? addContactUseCase;
   GetContactsUseCase? getContactsUseCase;
+  UpdateProfileUseCase? updateProfileUseCase;
+  GetUserUseCase? getUserUseCase;
 
   UserRemoteDataSourceImp? userRemoteDataSourceImp;
   UserRepositoryImp? userRepositoryImp;
@@ -30,5 +34,7 @@ class UsecaseConfig {
     createProfileUseCase = CreateProfileUseCase(userRepositoryImp!);
     addContactUseCase = AddContactUseCase(userRepositoryImp!);
     getContactsUseCase = GetContactsUseCase(userRepositoryImp!);
+    updateProfileUseCase = UpdateProfileUseCase(userRepositoryImp!);
+    getUserUseCase = GetUserUseCase(userRepositoryImp!);
   }
 }

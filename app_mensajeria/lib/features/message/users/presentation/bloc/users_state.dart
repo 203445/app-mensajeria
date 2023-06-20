@@ -8,9 +8,16 @@ class Loading extends UsersState {}
 
 class LoadedPage extends UsersState {}
 
-class LoadedFeed extends UsersState {
+class LoadedContacts extends UsersState {
   final List<User> contacts;
-  LoadedFeed({required this.contacts});
+  LoadedContacts({required this.contacts});
+}
+
+class LoadedChats extends UsersState {}
+
+class LoadedUser extends UsersState {
+  final User user;
+  LoadedUser({required this.user});
 }
 
 class VerifiedUser extends UsersState {
@@ -21,6 +28,11 @@ class VerifiedUser extends UsersState {
 class UserCreated extends UsersState {
   final User user;
   UserCreated({required this.user});
+}
+
+class UserEdited extends UsersState { 
+  final User user;
+  UserEdited({required this.user});
 }
 
 class Logged extends UsersState {

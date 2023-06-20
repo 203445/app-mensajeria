@@ -5,25 +5,28 @@ import 'package:app_mensajeria/features/message/users/presentation/widgets/error
 import 'package:app_mensajeria/features/message/users/presentation/bloc/users_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:app_mensajeria/styles.dart';
+import 'package:dio/dio.dart';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
 
-class CreateProfilePage extends StatefulWidget {
-  final String email;
-  final String password;
+import '../../domain/entities/users.dart';
 
-  const CreateProfilePage(
-      {Key? key, required this.email, required this.password})
-      : super(key: key);
+class EditProfilePage extends StatefulWidget {
+  final User user;
+  const EditProfilePage({Key? key, required this.user}) : super(key: key);
 
   @override
-  State<CreateProfilePage> createState() => _CreateProfilePageState();
+  State<EditProfilePage> createState() => _EditProfilePageState();
 }
 
-class _CreateProfilePageState extends State<CreateProfilePage> {
-  final TextEditingController usernameController = TextEditingController();
-  final TextEditingController userdataController = TextEditingController();
+class _EditProfilePageState extends State<EditProfilePage> {
+  
+  String apiURI =
+    'https://393f-2806-2f0-8161-f0b5-ec86-f19d-9d4c-c541.ngrok-free.app';
+  final dio = Dio();
+
+  
   File? _profileimage;
 
   Future getImage() async {
@@ -36,6 +39,7 @@ class _CreateProfilePageState extends State<CreateProfilePage> {
     });
   }
 
+
   @override
   void initState() {
     context.read<UsersBloc>().add(PageNavegation());
@@ -44,6 +48,10 @@ class _CreateProfilePageState extends State<CreateProfilePage> {
 
   @override
   Widget build(BuildContext context) {
+
+  final TextEditingController usernameController = TextEditingController(text: widget.user.name);
+  final TextEditingController userdataController = TextEditingController(text: widget.user.data);
+
     return Scaffold(
         backgroundColor: Theme.of(context).brightness == Brightness.dark
             ? DarkModeColors.backgroundColor
@@ -58,7 +66,7 @@ class _CreateProfilePageState extends State<CreateProfilePage> {
                       : LightModeColors.accentColor,
                 ),
               );
-            } else if (state is LoadedPage) {
+            } else if (state is LoadedPage || state is LoadedContacts || state is LoadedChats) {
               return Center(
                 child: LayoutBuilder(builder:
                     (BuildContext context, BoxConstraints viewportConstrains) {
@@ -75,7 +83,7 @@ class _CreateProfilePageState extends State<CreateProfilePage> {
                                 SizedBox(
                                   width: double.infinity,
                                   child: Text(
-                                    "Crea tu perfil",
+                                    "Edita tu perfil",
                                     style: TextStyle(
                                         fontSize: 36,
                                         fontWeight: FontWeight.w700,
@@ -108,8 +116,8 @@ class _CreateProfilePageState extends State<CreateProfilePage> {
                                                         null
                                                     ? Image.file(_profileimage!)
                                                         .image
-                                                    : Image.asset(
-                                                            "assets/images/default-user.png")
+                                                    : Image.network(
+                                                            apiURI+widget.user.img)
                                                         .image),
                                             Positioned(
                                                 right: -1,
@@ -178,10 +186,9 @@ class _CreateProfilePageState extends State<CreateProfilePage> {
                                   height:
                                       MediaQuery.of(context).size.height * 0.08,
                                   child: OutlinedButton(
-                                      onPressed: ()  {
-                                            context.read<UsersBloc>().add(CreateProfile(
-                                              email: widget.email, 
-                                              password: widget.password, 
+                                      onPressed: () {
+                                            context.read<UsersBloc>().add(EditProfile(
+                                              id: widget.user.id.toString(),
                                               name: usernameController.text, 
                                               data: userdataController.text, 
                                               img: _profileimage != null ? _profileimage : null));
@@ -221,10 +228,10 @@ class _CreateProfilePageState extends State<CreateProfilePage> {
                   );
                 }),
               );
-            } else if (state is UserCreated) {
+            } else if (state is UserEdited) {
               return Center(
                  child: FutureBuilder(
-                  future: Future.delayed(Duration.zero, () {
+                  future: Future.delayed(Duration(milliseconds: 50), () {
                     Navigator.push(
                         context,
                         MaterialPageRoute(

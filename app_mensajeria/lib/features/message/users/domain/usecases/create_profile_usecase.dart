@@ -9,6 +9,6 @@ class CreateProfileUseCase {
   CreateProfileUseCase(this.userRepository);
 
   Future<User?> execute(String name, String data, File? img, String email, String password) async {
-    return await userRepository.createProfile(name, data, img!, email, password);
+    return await userRepository.createProfile(name, data, img, email, password);
   }
 }

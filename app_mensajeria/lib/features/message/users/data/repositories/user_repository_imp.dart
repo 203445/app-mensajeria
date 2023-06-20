@@ -16,7 +16,7 @@ class UserRepositoryImp implements UserRepository {
   }
 
   @override
-  Future<User?> createProfile(String name, String data, File img, String email, String password) async {
+  Future<User?> createProfile(String name, String data, File? img, String email, String password) async {
     return await userRemoteDataSource.createProfile(name, data, img, email, password);
   }
 
@@ -28,6 +28,16 @@ class UserRepositoryImp implements UserRepository {
   @override
   Future<List<User>> getContacts(String id) async {
     return await userRemoteDataSource.getContacts(id);
+  }
+
+  @override
+  Future<bool> updateProfile(String id, String name, String data, File? img) async {
+    return await userRemoteDataSource.updateProfile(id, name, data, img);
+  }
+
+  @override
+  Future<User?> getUser(String id) async {
+    return await userRemoteDataSource.getUser(id);
   }
 
 }

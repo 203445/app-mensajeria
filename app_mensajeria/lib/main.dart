@@ -32,12 +32,15 @@ class MyApp extends StatelessWidget {
                   verifyUserExistenceUseCase : usecaseConfig.verifyUserExistenceUseCase!,
                   createProfileUseCase: usecaseConfig.createProfileUseCase!,
                   addContactUseCase: usecaseConfig.addContactUseCase!,
-                  getContactsUseCase: usecaseConfig.getContactsUseCase!
+                  getContactsUseCase: usecaseConfig.getContactsUseCase!,
+                  updateProfileUseCase: usecaseConfig.updateProfileUseCase!,
+                  getUserUseCase: usecaseConfig.getUserUseCase!
                 ),
         ),
         
       ], 
       child: MaterialApp(
+      debugShowCheckedModeBanner: false,
       title: 'Flutter Demo',
       theme: ThemeData(
         primarySwatch: primaryColor,

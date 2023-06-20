@@ -1,46 +1,20 @@
-import 'dart:io';
-
-import 'package:app_mensajeria/features/message/users/presentation/pages/home_page.dart';
-import 'package:app_mensajeria/features/message/users/presentation/widgets/error_view.dart';
-import 'package:app_mensajeria/features/message/users/presentation/bloc/users_bloc.dart';
 import 'package:flutter/material.dart';
-import 'package:app_mensajeria/styles.dart';
-
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:image_picker/image_picker.dart';
 
-class CreateProfilePage extends StatefulWidget {
-  final String email;
-  final String password;
+import '../../../../../styles.dart';
+import '../bloc/users_bloc.dart';
+import '../widgets/error_view.dart';
 
-  const CreateProfilePage(
-      {Key? key, required this.email, required this.password})
-      : super(key: key);
+class AddContactPage extends StatefulWidget {
+  final String id;
+  const AddContactPage({Key? key, required this.id}) : super(key: key);
 
   @override
-  State<CreateProfilePage> createState() => _CreateProfilePageState();
+  State<AddContactPage> createState() => _AddContactPageState();
 }
 
-class _CreateProfilePageState extends State<CreateProfilePage> {
-  final TextEditingController usernameController = TextEditingController();
-  final TextEditingController userdataController = TextEditingController();
-  File? _profileimage;
-
-  Future getImage() async {
-    final img = await ImagePicker().pickImage(source: ImageSource.gallery);
-    if (img == null) {
-      return;
-    }
-    setState(() {
-      _profileimage = File(img.path);
-    });
-  }
-
-  @override
-  void initState() {
-    context.read<UsersBloc>().add(PageNavegation());
-    super.initState();
-  }
+class _AddContactPageState extends State<AddContactPage> {
+  final TextEditingController emailController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -58,7 +32,7 @@ class _CreateProfilePageState extends State<CreateProfilePage> {
                       : LightModeColors.accentColor,
                 ),
               );
-            } else if (state is LoadedPage) {
+            } else if (state is LoadedContacts) {
               return Center(
                 child: LayoutBuilder(builder:
                     (BuildContext context, BoxConstraints viewportConstrains) {
@@ -75,7 +49,7 @@ class _CreateProfilePageState extends State<CreateProfilePage> {
                                 SizedBox(
                                   width: double.infinity,
                                   child: Text(
-                                    "Crea tu perfil",
+                                    "Agregar contacto",
                                     style: TextStyle(
                                         fontSize: 36,
                                         fontWeight: FontWeight.w700,
@@ -88,54 +62,19 @@ class _CreateProfilePageState extends State<CreateProfilePage> {
                                 ),
                                 Padding(
                                   padding: EdgeInsets.only(
-                                      top: MediaQuery.of(context).size.height *
-                                          0.075,
-                                      bottom:
-                                          MediaQuery.of(context).size.height *
-                                              0.1975),
+                                      top: MediaQuery.of(context).size.height *0.075,
+                                      bottom:MediaQuery.of(context).size.height *0.1975),
                                   child: SizedBox(
-                                    height: MediaQuery.of(context).size.height *
-                                        0.4,
+                                    height: MediaQuery.of(context).size.height *0.4,
                                     child: Form(
                                       child: Column(
                                         mainAxisAlignment:
                                             MainAxisAlignment.spaceBetween,
                                         children: [
-                                          Stack(children: [
-                                            CircleAvatar(
-                                                radius: 76,
-                                                backgroundImage: _profileimage !=
-                                                        null
-                                                    ? Image.file(_profileimage!)
-                                                        .image
-                                                    : Image.asset(
-                                                            "assets/images/default-user.png")
-                                                        .image),
-                                            Positioned(
-                                                right: -1,
-                                                bottom: -3,
-                                                child:
-                                                    FloatingActionButton.small(
-                                                  onPressed: () {
-                                                    getImage();
-                                                  },
-                                                  backgroundColor:
-                                                      Theme.of(context)
-                                                                  .brightness ==
-                                                              Brightness.dark
-                                                          ? DarkModeColors
-                                                              .accentColor
-                                                          : LightModeColors
-                                                              .accentColor,
-                                                  child: const Icon(Icons.edit,
-                                                      color: Color.fromARGB(
-                                                          236, 255, 255, 255)),
-                                                ))
-                                          ]),
                                           TextFormField(
-                                            controller: usernameController,
+                                            controller: emailController,
                                             decoration: InputDecoration(
-                                              hintText: "Nombre",
+                                              hintText: "Correo electronico",
                                               filled: true,
                                               fillColor: Theme.of(context)
                                                           .brightness ==
@@ -150,24 +89,7 @@ class _CreateProfilePageState extends State<CreateProfilePage> {
                                             style:
                                                 const TextStyle(fontSize: 18),
                                           ),
-                                          TextFormField(
-                                            controller: userdataController,
-                                            decoration: InputDecoration(
-                                              hintText: "Información",
-                                              filled: true,
-                                              fillColor: Theme.of(context)
-                                                          .brightness ==
-                                                      Brightness.dark
-                                                  ? DarkModeColors.detailColor
-                                                  : LightModeColors.detailColor,
-                                              border: OutlineInputBorder(
-                                                borderRadius:
-                                                    BorderRadius.circular(12),
-                                              ),
-                                            ),
-                                            style:
-                                                const TextStyle(fontSize: 18),
-                                          ),
+                                         
                                         ],
                                       ),
                                     ),
@@ -178,13 +100,8 @@ class _CreateProfilePageState extends State<CreateProfilePage> {
                                   height:
                                       MediaQuery.of(context).size.height * 0.08,
                                   child: OutlinedButton(
-                                      onPressed: ()  {
-                                            context.read<UsersBloc>().add(CreateProfile(
-                                              email: widget.email, 
-                                              password: widget.password, 
-                                              name: usernameController.text, 
-                                              data: userdataController.text, 
-                                              img: _profileimage != null ? _profileimage : null));
+                                      onPressed: () => {
+                                            context.read<UsersBloc>().add(AddContact(id: widget.id, email: emailController.text))
                                           },
                                       style: OutlinedButton.styleFrom(
                                           shape: RoundedRectangleBorder(
@@ -221,14 +138,11 @@ class _CreateProfilePageState extends State<CreateProfilePage> {
                   );
                 }),
               );
-            } else if (state is UserCreated) {
+            } else if (state is LoadedPage) {
               return Center(
                  child: FutureBuilder(
                   future: Future.delayed(Duration.zero, () {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => HomePage(user: state.user,)));
+                    Navigator.pop(context);
                   }),
                   builder: (context, snapshot) {
                     return Container();

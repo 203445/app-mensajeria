@@ -6,9 +6,10 @@ import 'package:app_mensajeria/features/message/users/domain/usecases/verify_use
 
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:app_mensajeria/features/message/users/domain/entities/users.dart';
-import 'package:app_mensajeria/features/message/users/data/models/user_model.dart';
 
 import '../../domain/usecases/get_contacts_usecase.dart';
+import '../../domain/usecases/get_user_usecase.dart';
+import '../../domain/usecases/update_profile.dart';
 
 part 'users_event.dart';
 part 'users_state.dart';
@@ -18,10 +19,16 @@ class UsersBloc extends Bloc<UsersEvent, UsersState> {
   final CreateProfileUseCase createProfileUseCase;
   final AddContactUseCase addContactUseCase;
   final GetContactsUseCase getContactsUseCase;
+  final UpdateProfileUseCase updateProfileUseCase;
+  final GetUserUseCase getUserUseCase;
 
   UsersBloc(
       {required this.verifyUserExistenceUseCase,
-      required this.createProfileUseCase, required this.addContactUseCase, required this.getContactsUseCase})
+      required this.createProfileUseCase,
+      required this.addContactUseCase,
+      required this.getContactsUseCase,
+      required this.updateProfileUseCase,
+      required this.getUserUseCase})
       : super(LoadedPage()) {
     on<UsersEvent>((event, emit) async {
       if (event is Register) {
@@ -40,25 +47,50 @@ class UsersBloc extends Bloc<UsersEvent, UsersState> {
           emit(Error(error: e.toString()));
         }
       } 
-      
-      else if (event is PageNavegation) {
+
+      else if (event is SignedInHome){
         try {
-          await Future.delayed(const Duration(milliseconds: 60), () {
-              emit(LoadedPage());
-            });
+          emit(Loading());
+          final User? user = await getUserUseCase.execute(event.id);
+          if (user != null) {
+            emit(LoadedUser(user: user));
+          }
+        } catch (e) {
+          emit(Error(error: e.toString()));
+        }
+      }
+      
+      else if (event is HomeNavegation) {
+        try {
+          emit(Loading());
+          if (event.index == 1) {
+            final List<User> contacts =
+                await getContactsUseCase.execute(event.id);
+            emit(LoadedContacts(contacts: contacts));
+          } else {
+            emit(LoadedPage()); //Emit LoadedChats
+          }
         } catch (e) {
           emit(Error(error: e.toString()));
         }
       } 
       
-      else if (event is CreateProfile){
+      else if (event is PageNavegation) {
+        try {
+          await Future.delayed(const Duration(milliseconds: 60), () {
+            emit(LoadedPage());
+          });
+        } catch (e) {
+          emit(Error(error: e.toString()));
+        }
+      } 
+      
+      else if (event is CreateProfile) {
         try {
           emit(Loading());
-          User? user = await createProfileUseCase.execute(event.name, event.data, event.img, event.email, event.password);
-          print(user);
+          User? user = await createProfileUseCase.execute(
+              event.name, event.data, event.img, event.email, event.password);
           if (user != null) {
-            
-            print("Holaaaa");
             emit(UserCreated(user: user));
           } else {
             emit(Error(error: 'Ocurrio un error creando tu cuenta.'));
@@ -69,15 +101,39 @@ class UsersBloc extends Bloc<UsersEvent, UsersState> {
         } catch (e) {
           emit(Error(error: e.toString()));
         }
-      }
+      } 
 
-      else if (event is AddContact){
+      else if (event is EditProfile){
+        try {
+          emit(Loading());
+          bool res = await updateProfileUseCase.execute(event.id, event.name, event.data, event.img);
+          if (res == true) {
+            print("EDITADO");
+            User? user = await getUserUseCase.execute(event.id);
+            if (user != null) {
+            emit(UserEdited(user: user));
+          }
+          } else {
+            emit(Error(error: 'Ocurrio un error editando tu cuenta.'));
+            await Future.delayed(const Duration(milliseconds: 2500), () {
+              emit(LoadedPage());
+            });
+          }
+        } catch (e) {
+          emit(Error(error: e.toString()));
+          await Future.delayed(const Duration(milliseconds: 2500), () {
+              emit(LoadedPage());
+            });
+        }
+      }
+      
+      else if (event is AddContact) {
         try {
           emit(Loading());
           bool response = await verifyUserExistenceUseCase.execute(event.email);
-          if (response) { 
-            bool success = await addContactUseCase.execute(event.email, event.id);
-            print("Se agrego el contacto");
+          if (response) {
+            bool success =
+                await addContactUseCase.execute(event.email, event.id);
             emit(LoadedPage());
           } else {
             emit(Error(error: 'El usuario que deseas agregar no existe'));
@@ -88,22 +144,9 @@ class UsersBloc extends Bloc<UsersEvent, UsersState> {
         } catch (e) {
           emit(Error(error: e.toString()));
         }
-      }
-
-      else if (event is GetContacts){
-        try {
-          emit(Loading());
-          final List<User> contacts = await getContactsUseCase.execute(event.id);
-          for (User contact in contacts) {
-            print("ID: ${contact.id}  Nombre: ${contact.name}  Informacion: ${contact.data}  Firebase: ${contact.firebaseId}"); 
-          }
-          emit(LoadedFeed(contacts: contacts));
-        } catch (e) {
-          emit(Error(error: e.toString()));
-        }
-      }
-
-      else if (event is ReturnPage){
+      } 
+      
+      else if (event is ReturnPage) {
         emit(LoadedPage());
       }
     });
