@@ -1,12 +1,10 @@
-import 'package:app_mensajeria/features/message/chat/presentation/pages/chats_view.dart';
-import 'package:app_mensajeria/usecase_config.dart';
-// import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:app_mensajeria/features/message/users/presentation/pages/login_page.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-// import 'features/message/chat/data/repositories/chat_repository_impl.dart';
-import 'features/message/chat/presentation/bloc/chats_bloc.dart';
+import 'features/message/users/presentation/bloc/users_bloc.dart';
 import 'firebase_options.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:app_mensajeria/usecase_config.dart';
 
 UsecaseConfig usecaseConfig = UsecaseConfig();
 
@@ -21,23 +19,46 @@ void main() async {
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
+  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    //  final uwu =  FirebaseFirestore.instance.collection('chats');
-    //   final chatsRepository = ChatRepositoryImpl(chatRemoteDataSource: uwu!);
+    const primaryColor = Colors.deepPurple;
+
     return MultiBlocProvider(
       providers: [
-        BlocProvider<ChatBloc>(
-          create: (BuildContext context) =>
-              ChatBloc(getChatsUsecase: usecaseConfig.getChatsUsecase!),
+        BlocProvider<UsersBloc>(
+          create: (BuildContext context) => UsersBloc(
+              verifyUserExistenceUseCase:
+                  usecaseConfig.verifyUserExistenceUseCase!,
+              createProfileUseCase: usecaseConfig.createProfileUseCase!,
+              addContactUseCase: usecaseConfig.addContactUseCase!,
+              getContactsUseCase: usecaseConfig.getContactsUseCase!,
+              updateProfileUseCase: usecaseConfig.updateProfileUseCase!,
+              getUserUseCase: usecaseConfig.getUserUseCase!),
         ),
       ],
       child: MaterialApp(
+        debugShowCheckedModeBanner: false,
         title: 'Flutter Demo',
         theme: ThemeData(
-          primarySwatch: Colors.blue,
+          primarySwatch: primaryColor,
+          textSelectionTheme: TextSelectionThemeData(
+            selectionColor: primaryColor.withOpacity(0.4),
+            selectionHandleColor: primaryColor,
+            cursorColor: primaryColor,
+          ),
         ),
-        home: AllChatsPage(),
+        darkTheme: ThemeData(
+          brightness: Brightness.dark,
+          primarySwatch: primaryColor,
+          textSelectionTheme: TextSelectionThemeData(
+            selectionColor: primaryColor.withOpacity(0.4),
+            selectionHandleColor: primaryColor,
+            cursorColor: primaryColor,
+          ),
+        ),
+        themeMode: ThemeMode.system,
+        home: const LoginPage(),
       ),
     );
   }

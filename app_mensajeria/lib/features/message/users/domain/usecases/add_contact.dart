@@ -1,12 +1,12 @@
 import 'package:app_mensajeria/features/message/users/domain/entities/users.dart';
 import 'package:app_mensajeria/features/message/users/domain/repositories/user_repository.dart';
 
-class GetContactsUseCase {
+class AddContactUseCase {
   final UserRepository userRepository;
 
-  GetContactsUseCase(this.userRepository);
+  AddContactUseCase(this.userRepository);
 
-  Future<List<User>> execute(String id) async {
-    return await userRepository.getContacts(id);
+  Future<bool> execute(String email, String id) async {
+    return await userRepository.addContact(email, id);
   }
 }

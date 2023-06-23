@@ -6,6 +6,14 @@ import 'package:app_mensajeria/features/message/chat/domain/usecases/upload_mess
 import 'features/message/chat/data/datasources/chat_remote_data_source.dart';
 import 'features/message/chat/domain/usecases/create_chats_usecase.dart';
 import 'features/message/chat/domain/usecases/get_chats_usecase.dart';
+import 'features/message/users/data/datasources/user_remote.dart';
+import 'features/message/users/data/repositories/user_repository_imp.dart';
+import 'features/message/users/domain/usecases/add_contact.dart';
+import 'features/message/users/domain/usecases/create_profile_usecase.dart';
+import 'features/message/users/domain/usecases/get_contacts_usecase.dart';
+import 'features/message/users/domain/usecases/get_user_usecase.dart';
+import 'features/message/users/domain/usecases/update_profile.dart';
+import 'features/message/users/domain/usecases/verify_user_existence_usecase.dart';
 
 class UsecaseConfig {
   GetChatsUsecase? getChatsUsecase;
@@ -13,9 +21,19 @@ class UsecaseConfig {
   SendMessageUseCase? sendMessageUsecase;
   GetMessageUseCase? getMessageUseCase;
   UploadMediaUseCase? uploadMediaUseCase;
-  // DeleteChatsUsecase? deleteGameUsecase;
+
   ChatRepositoryImpl? chatRepositoryImpl;
   ChatRemoteDataSourceImp? chatRemoteDataSourceImp;
+
+  VerifyUserExistenceUseCase? verifyUserExistenceUseCase;
+  CreateProfileUseCase? createProfileUseCase;
+  AddContactUseCase? addContactUseCase;
+  GetContactsUseCase? getContactsUseCase;
+  UpdateProfileUseCase? updateProfileUseCase;
+  GetUserUseCase? getUserUseCase;
+
+  UserRemoteDataSourceImp? userRemoteDataSourceImp;
+  UserRepositoryImp? userRepositoryImp;
 
   UsecaseConfig() {
     chatRemoteDataSourceImp = ChatRemoteDataSourceImp();
@@ -28,5 +46,14 @@ class UsecaseConfig {
     getMessageUseCase = GetMessageUseCase(chatsRepository: chatRepositoryImpl!);
     uploadMediaUseCase =
         UploadMediaUseCase(chatsRepository: chatRepositoryImpl!);
+    userRemoteDataSourceImp = UserRemoteDataSourceImp();
+    userRepositoryImp =
+        UserRepositoryImp(userRemoteDataSource: userRemoteDataSourceImp!);
+    verifyUserExistenceUseCase = VerifyUserExistenceUseCase(userRepositoryImp!);
+    createProfileUseCase = CreateProfileUseCase(userRepositoryImp!);
+    addContactUseCase = AddContactUseCase(userRepositoryImp!);
+    getContactsUseCase = GetContactsUseCase(userRepositoryImp!);
+    updateProfileUseCase = UpdateProfileUseCase(userRepositoryImp!);
+    getUserUseCase = GetUserUseCase(userRepositoryImp!);
   }
 }

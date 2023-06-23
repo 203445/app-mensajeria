@@ -1,15 +1,15 @@
 class User {
-  final String telefono;
-  final String informacion;
-  final String foto;
-  final String nombre;
+  final String data;
+  final String img;
+  final String name;
   final String id;
+  final String firebaseId;
 
   User({
-    required this.telefono,
-    required this.informacion,
-    required this.foto,
-    required this.nombre,
+    required this.data,
+    required this.img,
+    required this.name,
     required this.id,
+    required this.firebaseId,
   });
 }
