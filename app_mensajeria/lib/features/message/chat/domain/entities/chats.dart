@@ -1,10 +1,3 @@
-class Message {
-  final MessageType type;
-  final String content;
-
-  Message({required this.type, required this.content});
-}
-
 enum MessageType {
   text,
   image,
@@ -15,29 +8,31 @@ enum MessageType {
 }
 
 class Chats {
-  final String id;
+  // final String userId;
   final String userEmisorId;
   final String userReceptorId;
-  final List<Message> messages;
-  final String timestamp;
-  final MessageType type;
+  final Map<String, dynamic> messages;
+  // final String timestamp;
+  // final MessageType type;
 
   Chats(
-      {required this.id,
+      {
+      //required this.userId,
       required this.userEmisorId,
       required this.userReceptorId,
       required this.messages,
-      required this.timestamp,
-      required this.type});
+      // required this.timestamp,
+      // required this.type
+      });
 
   Map<String, dynamic> toMap() {
     return {
-      'id': id,
+      // 'userId': userId,
       'userEmisorId': userEmisorId,
       'userReceptorId': userReceptorId,
       'messages': messages,
-      'timestamp': timestamp,
-      'type': type,
+      // 'timestamp': timestamp,
+      // 'type': type,
     };
   }
 }

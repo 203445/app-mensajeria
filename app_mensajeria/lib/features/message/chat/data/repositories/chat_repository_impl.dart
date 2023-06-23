@@ -24,12 +24,14 @@ class ChatRepositoryImpl implements ChatsRepository {
   }
 
   @override
-  Future<void> sendMessage(String chatId, Message message, int type) async {
-    return await chatRemoteDataSource.sendMessage(chatId, message, type);
+  Future<void> sendMessage(
+      String chatId, String message, int type, String userId) async {
+    return await chatRemoteDataSource.sendMessage(
+        chatId, message, type, userId);
   }
 
   @override
-  Future<List<Message>> getMessage(String chatId) async {
+  Future<List<ChatModel>> getMessage(String chatId) async {
     return await chatRemoteDataSource.getMessage(chatId);
   }
 
