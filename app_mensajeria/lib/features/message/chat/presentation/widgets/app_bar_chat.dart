@@ -1,33 +1,35 @@
 import 'package:flutter/material.dart';
-import '../../../../../styles.dart';
-import '../../domain/entities/users.dart';
 
-class AppBarWidget extends StatefulWidget {
-  final User user;
-  const AppBarWidget({Key? key, required this.user}) : super(key: key);
+import '../../../../../styles.dart';
+
+class AppBarWidgetChats extends StatefulWidget {
+  final String name;
+  final String img;
+  final String data;
+  const AppBarWidgetChats(
+      {Key? key, required this.name, required this.img, required this.data})
+      : super(key: key);
 
   @override
-  State<AppBarWidget> createState() => _AppBarWidgetState();
+  State<AppBarWidgetChats> createState() => _AppBarWidgetChats();
 }
 
-class _AppBarWidgetState extends State<AppBarWidget> {
-  final String apiURI =
-      'https://1531-187-188-32-68.ngrok-free.app';
+class _AppBarWidgetChats extends State<AppBarWidgetChats> {
+  final String apiURI = 'https://1531-187-188-32-68.ngrok-free.app';
 
   @override
   Widget build(BuildContext context) {
     return Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 23),
+        padding: const EdgeInsets.symmetric(horizontal: 1),
         child: SizedBox(
-          width: MediaQuery.of(context).size.width * 0.55,
+          width: MediaQuery.of(context).size.width * 0.50,
           child: Row(
-            mainAxisAlignment: MainAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.end,
             children: [
               Padding(
-                padding: const EdgeInsets.only(right: 15),
+                padding: const EdgeInsets.only(right: 20),
                 child: CircleAvatar(
-                  backgroundImage:
-                      Image.network(apiURI + widget.user.img).image,
+                  backgroundImage: Image.network(apiURI + widget.img).image,
                   radius: 34,
                 ),
               ),
@@ -38,7 +40,7 @@ class _AppBarWidgetState extends State<AppBarWidget> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      widget.user.name,
+                      widget.name,
                       style: TextStyle(
                         fontSize: 25,
                         fontWeight: FontWeight.w700,
@@ -48,7 +50,7 @@ class _AppBarWidgetState extends State<AppBarWidget> {
                       ),
                     ),
                     Text(
-                      widget.user.data,
+                      widget.data,
                       style: TextStyle(
                           fontSize: 13,
                           fontWeight: FontWeight.w300,

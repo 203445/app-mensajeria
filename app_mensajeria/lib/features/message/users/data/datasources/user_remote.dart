@@ -15,8 +15,7 @@ import 'package:flutter/material.dart';
 final auth = FirebaseAuth.instance;
 final dio = Dio();
 
-String apiURI =
-    'https://393f-2806-2f0-8161-f0b5-ec86-f19d-9d4c-c541.ngrok-free.app';
+String apiURI = 'https://1531-187-188-32-68.ngrok-free.app';
 
 Future<File> getImageFileFromAssets() async {
   const String path = "images/default-user.png";
@@ -65,7 +64,7 @@ class UserRemoteDataSourceImp implements UserRemoteDataSource {
       );
 
       firebaseId = userCredential.user!.uid.toString();
-    
+
       if (img != null) {
         formData = FormData.fromMap({
           "name": name,

@@ -1,3 +1,4 @@
+import 'package:app_mensajeria/features/message/chat/presentation/pages/chat_defaul.dart';
 import 'package:app_mensajeria/features/message/users/domain/entities/users.dart';
 import 'package:app_mensajeria/features/message/users/presentation/bloc/users_bloc.dart';
 import 'package:app_mensajeria/features/message/users/presentation/pages/add_contact_page.dart';
@@ -8,6 +9,11 @@ import 'package:app_mensajeria/features/message/users/presentation/widgets/error
 import 'package:flutter/material.dart';
 import 'package:app_mensajeria/styles.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+
+import '../../../../../main.dart';
+import '../../../chat/domain/entities/chats.dart';
+
+/// AQUI DEBO HACER UN GET ID DEPENDIENDO A LOS CHATS DEL USUARIO
 
 class HomePage extends StatefulWidget {
   final User user;
@@ -105,79 +111,110 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                 padding:
                     const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
                 child: SizedBox(
-                    width: double.infinity,
-                    height: MediaQuery.of(context).size.height * 0.725,
+                    // width: double.infinity,
+                    // height: MediaQuery.of(context).size.height,
                     child: TabBarView(
-                      controller: tabController,
+                  controller: tabController,
+                  children: [
+                    Column(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        SizedBox(
-                          width: double.infinity,
-                          height: MediaQuery.of(context).size.height,
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              const Text("Chats contenido"),
-                              Align(
-                                alignment: Alignment.bottomRight,
-                                child: FloatingActionButton(
-                                  onPressed: () {
-                                    Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                            builder: (context) =>
-                                                AddContactPage(
-                                                  id: widget.user.id,
-                                                )));
-                                  },
-                                  backgroundColor:
-                                      Theme.of(context).brightness ==
-                                              Brightness.dark
-                                          ? DarkModeColors.accentColor
-                                          : LightModeColors.accentColor,
-                                  child: const Icon(
-                                    Icons.add,
-                                    color: Colors.white,
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ), //AGREGAR COMPONENTE DE VISTA DE CHATS
-                        SizedBox(
-                          width: double.infinity,
-                          height: MediaQuery.of(context).size.height,
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              ContactsList(),
-                              Align(
-                                alignment: Alignment.bottomRight,
-                                child: FloatingActionButton(
-                                  onPressed: () {
-                                    Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                            builder: (context) =>
-                                                AddContactPage(
-                                                  id: widget.user.id,
-                                                )));
-                                  },
-                                  backgroundColor:
-                                      Theme.of(context).brightness ==
-                                              Brightness.dark
-                                          ? DarkModeColors.accentColor
-                                          : LightModeColors.accentColor,
-                                  child: const Icon(
-                                    Icons.add,
-                                    color: Colors.white,
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
+                        FutureBuilder<List<Chats>>(
+                          future: usecaseConfig.getChatsUsecase!.execute(),
+                          builder: (context, snapshot) {
+                            if (snapshot.connectionState ==
+                                ConnectionState.waiting) {
+                              return const Center(
+                                  child: CircularProgressIndicator());
+                            } else if (snapshot.hasError) {
+                              return const Center(
+                                  child: Text('Error al cargar los chats'));
+                            } else {
+                              final chats = snapshot.data ?? [];
+                              return ListView.separated(
+                                itemCount: chats.length,
+                                itemBuilder: (context, index) {
+                                  if (state is LoadedContacts) {
+                                    final userIDP =
+                                        state.contacts[index].firebaseId;
+
+                                    final chat = chats[index];
+                                    final messageContent =
+                                        chat.messages['content'];
+                                    final messageTimestamp =
+                                        chat.messages['timestamp'];
+                                    if (chat.userEmisorId == userIDP ||
+                                        chat.userReceptorId == userIDP) {
+                                      return ListTile(
+                                        title: Text(
+                                            'Chat ID: ${chat.userEmisorId}'),
+                                        subtitle: Text(
+                                          'Mensaje: $messageContent, Enviado: $messageTimestamp, Receptor: ${chat.userReceptorId}',
+                                        ),
+                                        onTap: () {
+                                          Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                              builder: (context) => PageChat(
+                                                  name: state
+                                                      .contacts[index].name,
+                                                  data: state
+                                                      .contacts[index].data,
+                                                  img: state
+                                                      .contacts[index].img),
+                                            ),
+                                          );
+                                        },
+                                      );
+                                    } else {
+                                      [];
+                                    }
+                                  }
+                                },
+                                separatorBuilder:
+                                    (BuildContext context, int index) {
+                                  return const SizedBox(height: 4);
+                                },
+                              );
+                            }
+                          },
                         ),
                       ],
-                    )),
+                    ),
+                    //AGREGAR COMPONENTE DE VISTA DE CHATS
+                    SizedBox(
+                      width: double.infinity,
+                      height: MediaQuery.of(context).size.height,
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          ContactsList(widget.user.firebaseId),
+                          Align(
+                            alignment: Alignment.bottomRight,
+                            child: FloatingActionButton(
+                              onPressed: () {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => AddContactPage(
+                                              id: widget.user.id,
+                                            )));
+                              },
+                              backgroundColor: Theme.of(context).brightness ==
+                                      Brightness.dark
+                                  ? DarkModeColors.accentColor
+                                  : LightModeColors.accentColor,
+                              child: const Icon(
+                                Icons.add,
+                                color: Colors.white,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                )),
               );
             } else if (state is Error) {
               return const ErrorView();
