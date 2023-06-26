@@ -73,28 +73,44 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
             bottom: PreferredSize(
               preferredSize: const Size(0, 0),
               child: Container(
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(20),
+                  color: Theme.of(context).brightness == Brightness.dark
+                              ? DarkModeColors.detailColor
+                              : LightModeColors.detailColor,
+                ),
                 width: MediaQuery.of(context).size.width * 0.515,
-                child: TabBar(
-                    labelColor: Theme.of(context).brightness == Brightness.dark
-                        ? DarkModeColors.textColorTitles
-                        : LightModeColors.textColorTitles,
-                    unselectedLabelColor:
-                        Theme.of(context).brightness == Brightness.dark
-                            ? DarkModeColors.textColor
-                            : LightModeColors.textColor,
-                    controller: tabController,
-                    indicatorColor:
-                        Theme.of(context).brightness == Brightness.dark
-                            ? DarkModeColors.accentColor
-                            : LightModeColors.accentColor,
-                    tabs: const [
-                      Tab(
-                        text: "Chats",
+                height: MediaQuery.of(context).size.height * 0.045,
+                child: Padding(
+                  padding: const EdgeInsets.all(1),
+                  child: TabBar(
+                      labelColor: Theme.of(context).brightness == Brightness.dark
+                          ? DarkModeColors.textColorTitles
+                          : LightModeColors.textColorTitles,
+                      unselectedLabelColor:
+                          Theme.of(context).brightness == Brightness.dark
+                              ? DarkModeColors.textColor
+                              : LightModeColors.textColor,
+                      controller: tabController,
+                      indicator: BoxDecoration(
+                        borderRadius: BorderRadius.circular(20),
+                        color: Theme.of(context).brightness == Brightness.dark
+                          ? DarkModeColors.accentColor
+                          : LightModeColors.accentColor,
                       ),
-                      Tab(
-                        text: "Contactos",
-                      )
-                    ]),
+                      // indicatorColor:
+                      //     Theme.of(context).brightness == Brightness.dark
+                      //         ? DarkModeColors.accentColor
+                      //         : LightModeColors.accentColor,
+                      tabs: const [
+                        Tab(
+                          text: "Chats",
+                        ),
+                        Tab(
+                          text: "Contactos",
+                        )
+                      ]),
+                ),
               ),
             ),
           ),
@@ -117,7 +133,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                     child: TabBarView(
                       controller: tabController,
                       children: [
-                        ChatsList(userFire: widget.user.firebaseId ),
+                        ChatsList(userFire: widget.user.firebaseId,),
                         //AGREGAR COMPONENTE DE VISTA DE CHATS
                         SizedBox(
                           width: double.infinity,

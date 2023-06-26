@@ -6,6 +6,7 @@ import '../../domain/entities/chats.dart';
 
 class ChatsList extends StatefulWidget {
   final String userFire;
+  
   // final String img;
   // final String data;
   // final String id;
@@ -21,7 +22,7 @@ class ChatsList extends StatefulWidget {
 }
 
 class _ChatsListState extends State<ChatsList> {
-  String apiURI = 'https://274d-187-188-32-68.ngrok-free.app';
+  String apiURI = 'https://85c1-190-123-41-228.ngrok-free.app';
 
   @override
   Widget build(BuildContext context) {
@@ -54,7 +55,8 @@ class _ChatsListState extends State<ChatsList> {
                           final chat = chats[index];
                           final messageContent = chat.messages['content'];
                           final messageTimestamp = chat.messages['timestamp'];
-                          print(messageContent);
+                          //print(messageContent);
+        
                           return Padding(
                             padding: const EdgeInsets.symmetric(
                                 horizontal: 8, vertical: 7),

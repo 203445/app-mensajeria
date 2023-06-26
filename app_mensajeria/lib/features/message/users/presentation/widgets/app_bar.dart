@@ -11,7 +11,7 @@ class AppBarWidget extends StatefulWidget {
 }
 
 class _AppBarWidgetState extends State<AppBarWidget> {
-  final String apiURI = 'https://274d-187-188-32-68.ngrok-free.app';
+  final String apiURI = 'https://85c1-190-123-41-228.ngrok-free.app';
 
   @override
   Widget build(BuildContext context) {
