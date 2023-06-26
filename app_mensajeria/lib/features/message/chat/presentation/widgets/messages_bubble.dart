@@ -4,19 +4,21 @@ import 'package:app_mensajeria/styles.dart';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 
-class MessageBubble extends StatelessWidget {
+class Message extends StatelessWidget {
   final String text;
   final String typeimage;
   final String typevideo;
   final String typeaudio;
+  final String typegif;
   final bool isCurrentUser;
 
-  MessageBubble(
+  Message(
       {super.key,
       required this.text,
       required this.typeimage,
       required this.typevideo,
       required this.typeaudio,
+      required this.typegif,
       required this.isCurrentUser});
 
   final player = AudioPlayer();
@@ -60,8 +62,32 @@ class MessageBubble extends StatelessWidget {
                       width: 180,
                       height: 140,
                       child: Image.network(
+                        typeimage,
+                        fit: BoxFit.cover,
+                      ),
+                    ),
+                  ),
+                if (typegif.isNotEmpty)
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(15.0),
+                    child: Container(
+                      width: 180,
+                      height: 140,
+                      child: Image.network(
                         typeimage!,
                         fit: BoxFit.cover,
+                        loadingBuilder: (BuildContext context, Widget child,
+                            ImageChunkEvent? loadingProgress) {
+                          if (loadingProgress == null) return child;
+                          return Center(
+                            child: CircularProgressIndicator(
+                              value: loadingProgress.expectedTotalBytes != null
+                                  ? loadingProgress.cumulativeBytesLoaded /
+                                      loadingProgress.expectedTotalBytes!
+                                  : null,
+                            ),
+                          );
+                        },
                       ),
                     ),
                   ),

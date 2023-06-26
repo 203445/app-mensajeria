@@ -282,11 +282,12 @@ class _HomePageState extends State<PageChat> with TickerProviderStateMixin {
                               ? Alignment.centerLeft
                               : Alignment.centerRight;
 
-                          return MessageBubble(
+                          return Message(
                             text: message['type'] == 0 ? content : '',
                             typeimage: message['type'] == 1 ? content : '',
                             typevideo: message['type'] == 3 ? content : '',
                             typeaudio: message['type'] == 2 ? content : '',
+                            typegif: message['type'] == 4 ? content : '',
                             isCurrentUser: isEmisor,
                             // alignment: alignment,
                           );
@@ -296,40 +297,6 @@ class _HomePageState extends State<PageChat> with TickerProviderStateMixin {
                   },
                 ),
               ),
-              // Expanded(
-              //   child: FutureBuilder<List<Chats>>(
-              //     future: usecaseConfig.getMessageUseCase!.execute(
-              //         "RAbYRhxqw1gK38G5OYOJY4PXsln2_UmbA8PxebYVMRI8DGyHCJAtM5rp1"),
-              //     builder: (context, snapshot) {
-              //       if (snapshot.hasData) {
-              //         final messages = snapshot.data!;
-              //         return ListView.builder(
-              //           reverse: true,
-              //           itemCount: messages.length,
-              //           itemBuilder: (ctx, item) {
-              //             final chat = messages[item].messages;
-              //             print(chat);
-
-              //             return MessageBubble(
-              //               text: 'hola',
-              //               // imageUrl: messages[item]['imageUrl'],
-              //               // videoUrl: messages[item]['videoUrl'],
-              //               // audioUrl: messages[item]['audioUrl'],
-              //               isCurrentUser:
-              //                   currentUser!.uid == messages[item].userEmisorId,
-              //             );
-              //           },
-              //         );
-              //       } else if (snapshot.hasError) {
-              //         return Text('Error al cargar los mensajes');
-              //       } else {
-              //         return Center(
-              //           child: CircularProgressIndicator(),
-              //         );
-              //       }
-              //     },
-              //   ),
-              // ),
               Padding(
                 padding:
                     const EdgeInsets.symmetric(horizontal: 20, vertical: 20),

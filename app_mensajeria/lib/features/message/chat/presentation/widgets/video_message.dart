@@ -43,8 +43,8 @@ class _VideoMessageState extends State<VideoMessage> {
       child: ClipRRect(
         borderRadius: BorderRadius.circular(15.0),
         child: Container(
-          width: 180,
-          height: 140,
+          width: 280,
+          height: 500,
           child: _controller.value.isInitialized
               ? AspectRatio(
                   aspectRatio: _controller.value.aspectRatio,

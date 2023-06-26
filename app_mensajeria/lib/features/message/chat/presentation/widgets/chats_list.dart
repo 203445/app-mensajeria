@@ -1,12 +1,7 @@
-import 'package:app_mensajeria/features/message/chat/presentation/pages/chat_defaul.dart';
-import 'package:app_mensajeria/features/message/chat/presentation/pages/chat_individual.dart';
 import 'package:flutter/material.dart';
-
-import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../../main.dart';
 import '../../../../../styles.dart';
-import '../../../users/presentation/bloc/users_bloc.dart';
 import '../../domain/entities/chats.dart';
 
 class ChatsList extends StatefulWidget {
@@ -153,23 +148,6 @@ class _ChatsListState extends State<ChatsList> {
                               //             img: state.contacts[index].img)));
                               // print(state.contacts[index].name);
 
- // ListTile(
-                    //   title: Text('Chat ID: ${chat.userEmisorId}'),
-                    //   subtitle: Text(
-                    //     'Mensaje: $messageContent, Enviado: $messageTimestamp, Receptor: ${chat.userReceptorId}',
-                    //   ),
-                    //   onTap: () {
-                    //     Navigator.push(
-                    //       context,
-                    //       MaterialPageRoute(
-                    //         builder: (context) => ChatDetailPage(
-                    //           chatId: 'AvdViv2isUzZ178FM6Cc',
-                    //           usecaseConfig: usecaseConfig,
-                    //         ),
-                    //       ),
-                    //     );
-                    //   },
-                    // );
 
                      // Padding(
                                     //   padding: const EdgeInsets.only(right: 15),
