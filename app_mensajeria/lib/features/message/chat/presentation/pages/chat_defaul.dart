@@ -1,7 +1,7 @@
 import 'dart:io';
-
 import 'package:app_mensajeria/features/message/chat/domain/entities/chats.dart';
 import 'package:app_mensajeria/features/message/chat/presentation/widgets/app_bar_chat.dart';
+import 'package:app_mensajeria/features/message/chat/presentation/widgets/messages_bubble.dart';
 import 'package:app_mensajeria/usecase_config.dart';
 // import 'package:app_mensajeria/features/message/users/domain/entities/users.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -39,29 +39,35 @@ class _HomePageState extends State<PageChat> with TickerProviderStateMixin {
   File? _selectedAudio;
   File? _selectedGif;
 
-  // @override
-  // void initState() async {
-  //   super.initState();
-  //   final tre = await usecaseConfig.getChatIdUsecase!
-  //       .execute(currentUser?.uid, widget.userRecp);
-  //   _loadMessages(tre!);
-  // }
+  @override
+  void initState() {
+    super.initState();
+    _loadMessages();
+  }
 
   @override
   void dispose() {
     _textController.dispose();
-
     super.dispose();
   }
 
-  void _loadMessages(String chatId) async {
-    final messages = await usecaseConfig.getMessageUseCase!.execute(chatId);
-    // setState(() {
-    //   _messages = messages
-    //       .map((message) =>
-    //           Message(type: message.type, content: message.content))
-    //       .toList();
-    // });
+  Future<void> _loadMessages() async {
+    final id = await usecaseConfig.getChatIdUsecase!
+        .execute(currentUser?.uid, widget.userRecp);
+
+    if (id != null) {
+      final messages = await usecaseConfig.getMessageUseCase!.execute(id);
+    } else {
+      print("no hay nada para mostrar");
+    }
+
+    // print(messages);
+    setState(() {
+      // _messages = messages
+      //     .map((message) =>
+      //         Message(type: message.type, content: message.content))
+      //     .toList();
+    });
   }
 
   Future<void> _selectImage() async {
@@ -146,7 +152,7 @@ class _HomePageState extends State<PageChat> with TickerProviderStateMixin {
     }
   }
 
-  void _sendMessage(MessageType messageType, String videoUrl) async {
+  Future<void> _sendMessage(MessageType messageType, String videoUrl) async {
     print("print aqui");
     // final text = _textController.text;
     MessageType messageType =
@@ -177,14 +183,14 @@ class _HomePageState extends State<PageChat> with TickerProviderStateMixin {
         .execute(currentUser?.uid, widget.userRecp);
 
     // Crear el objeto del mensaje con los datos necesarios
-    final tre = await usecaseConfig.getChatIdUsecase!
+    final chatId = await usecaseConfig.getChatIdUsecase!
         .execute(currentUser?.uid, widget.userRecp);
 
     await usecaseConfig.sendMessageUsecase!
-        .execute(tre!, videoUrl, messageType.intValue, currentUser!.uid);
+        .execute(chatId!, videoUrl, messageType.intValue, currentUser!.uid);
 
     _textController.clear();
-    _loadMessages(tre!);
+    _loadMessages();
     setState(() {
       _selectedImage = null;
       _selectedVideo = null;
@@ -210,7 +216,7 @@ class _HomePageState extends State<PageChat> with TickerProviderStateMixin {
             toolbarHeight: 110,
             leading: Builder(builder: (context) {
               return Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 10),
+                padding: const EdgeInsets.symmetric(horizontal: 5),
                 child: IconButton(
                   icon: const Icon(Icons.arrow_back_ios_new_rounded),
                   iconSize: 25,
@@ -233,7 +239,97 @@ class _HomePageState extends State<PageChat> with TickerProviderStateMixin {
               : LightModeColors.backgroundColor,
           body: Column(
             children: [
-              Expanded(child: Text("hola")),
+              Expanded(
+                child: FutureBuilder<List<Chats>>(
+                  future: usecaseConfig.getChatIdUsecase!
+                      .execute(currentUser?.uid, widget.userRecp)
+                      .then((chatId) {
+                    if (chatId != null) {
+                      return usecaseConfig.getMessageUseCase!.execute(chatId);
+                    } else {
+                      return Future.value([]);
+                    }
+                  }),
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return Center(
+                        child: CircularProgressIndicator(
+                          color: Theme.of(context).brightness == Brightness.dark
+                              ? DarkModeColors.accentColor
+                              : LightModeColors.accentColor,
+                        ),
+                      );
+                    } else if (snapshot.hasError) {
+                      return Text('Error: ${snapshot.error}');
+                    } else {
+                      final messages = snapshot.data ??
+                          []; // Si los mensajes son nulos, usa una lista vacía
+                      return ListView.builder(
+                        scrollDirection: Axis.vertical,
+                        itemCount: messages.length,
+                        itemBuilder: (ctx, item) {
+                          final chat = messages[item].messages;
+                          final messageId = chat.keys
+                              .toList()[0]; // Obtener el ID del mensaje
+                          final message = chat[messageId];
+                          final content = message['content'];
+                          final type = message['type'];
+                          final isEmisor =
+                              currentUser!.uid == messages[item].userEmisorId;
+
+                          // Establecer el alineamiento del MessageBubble
+                          final alignment = isEmisor
+                              ? Alignment.centerLeft
+                              : Alignment.centerRight;
+
+                          return MessageBubble(
+                            text: message['type'] == 0 ? content : '',
+                            typeimage: message['type'] == 1 ? content : '',
+                            typevideo: message['type'] == 3 ? content : '',
+                            typeaudio: message['type'] == 2 ? content : '',
+                            isCurrentUser: isEmisor,
+                            // alignment: alignment,
+                          );
+                        },
+                      );
+                    }
+                  },
+                ),
+              ),
+              // Expanded(
+              //   child: FutureBuilder<List<Chats>>(
+              //     future: usecaseConfig.getMessageUseCase!.execute(
+              //         "RAbYRhxqw1gK38G5OYOJY4PXsln2_UmbA8PxebYVMRI8DGyHCJAtM5rp1"),
+              //     builder: (context, snapshot) {
+              //       if (snapshot.hasData) {
+              //         final messages = snapshot.data!;
+              //         return ListView.builder(
+              //           reverse: true,
+              //           itemCount: messages.length,
+              //           itemBuilder: (ctx, item) {
+              //             final chat = messages[item].messages;
+              //             print(chat);
+
+              //             return MessageBubble(
+              //               text: 'hola',
+              //               // imageUrl: messages[item]['imageUrl'],
+              //               // videoUrl: messages[item]['videoUrl'],
+              //               // audioUrl: messages[item]['audioUrl'],
+              //               isCurrentUser:
+              //                   currentUser!.uid == messages[item].userEmisorId,
+              //             );
+              //           },
+              //         );
+              //       } else if (snapshot.hasError) {
+              //         return Text('Error al cargar los mensajes');
+              //       } else {
+              //         return Center(
+              //           child: CircularProgressIndicator(),
+              //         );
+              //       }
+              //     },
+              //   ),
+              // ),
               Padding(
                 padding:
                     const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
@@ -252,15 +348,6 @@ class _HomePageState extends State<PageChat> with TickerProviderStateMixin {
                         ),
                       ),
                     ),
-                    // IconButton(
-                    //   onPressed: _selectImage,
-                    //   icon: Icon(Icons.image),
-                    // ),
-                    // IconButton(
-                    //   onPressed: _selectVideo,
-                    //   icon: Icon(Icons.video_library),
-                    // ),
-
                     ElevatedButton(
                       style: ElevatedButton.styleFrom(
                           shape: const CircleBorder(),
@@ -338,7 +425,6 @@ class _HomePageState extends State<PageChat> with TickerProviderStateMixin {
                         String text = _textController.text.trim();
                         if (text.isNotEmpty) {
                           MessageType messageType = MessageType.text;
-                          print(messageType);
                           _sendMessage(messageType, text);
                         }
                       },
@@ -352,10 +438,6 @@ class _HomePageState extends State<PageChat> with TickerProviderStateMixin {
             ],
           )),
     );
-  }
-
-  _options() {
-    print(currentUser!.uid);
   }
 }
 

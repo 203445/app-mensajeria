@@ -145,8 +145,6 @@ class ChatRemoteDataSourceImp implements ChatRemoteDataSource {
       return groupId;
     }
 
-    // final chatData = chat.toMap();
-    // await _chatsCollection.doc().set(chatData);
     // Genera el groupId para el chat entre los dos usuarios
     String groupId = generateGroupId(userEmisor, userReceptor);
 
@@ -165,57 +163,58 @@ class ChatRemoteDataSourceImp implements ChatRemoteDataSource {
   @override
   Future<void> sendMessage(
       String chatId, String message, int type, String userId) async {
-    final chatRef = _chatsCollection.doc(chatId).collection('messagess');
+    final chatRef = _chatsCollection.doc(chatId);
     final messageData = {
       'content': message,
       'type': type,
       'timestamp': DateTime.now().millisecondsSinceEpoch.toString(),
       'userId': userId,
     };
-    await chatRef.add({
+    await chatRef.update({
       'messages': FieldValue.arrayUnion([messageData])
     });
   }
 
   @override
   Future<List<ChatModel>> getMessage(String chatId) async {
-    final chatRef = _chatsCollection.doc(chatId).collection('messagess');
-    QuerySnapshot querySnapshot =
-        await chatRef.orderBy('timestamp', descending: false).get();
-    List<ChatModel> messages = [];
+    final document = await _chatsCollection.doc(chatId).get();
 
-    for (QueryDocumentSnapshot documentSnapshot in querySnapshot.docs) {
-      Map<String, dynamic>? data =
-          documentSnapshot.data() as Map<String, dynamic>?;
-      List<dynamic> messageList = data?['messages'];
+    if (document.exists) {
+      final data = document.data() as Map<String, dynamic>;
+      final List<dynamic>? messagesData = data['messages'];
 
-      List<Map<String, dynamic>> mappedMessages =
-          List<Map<String, dynamic>>.from(messageList);
+      List<ChatModel> chatList = [];
 
-      List<Map<String, dynamic>> processedMessages =
-          mappedMessages.map((message) {
-        return {
-          'content': message['content'],
-          'type': message['type'],
-          'timestamp': message['timestamp'],
-          'userId': message['userId'],
-        };
-      }).toList();
+      if (messagesData != null && messagesData.isNotEmpty) {
+        for (var messageData in messagesData) {
+          if (messageData['content'] != null) {
+            final chat = ChatModel(
+              userEmisorId: data['userEmisorId'],
+              userReceptorId: data['userReceptorId'],
+              messages: {
+                '${messageData['key']}': {
+                  'content': messageData['content'],
+                  'type': messageData['type'],
+                  'timestamp': messageData['timestamp'],
+                  'userId': messageData['userId'],
+                },
+              },
+            );
 
-      Map<String, dynamic> messageData = {
-        'userEmisor': data?['userEmisor'],
-        'userReceptor': data?['userReceptor'],
-        'messages': processedMessages,
-      };
+            chatList.add(chat);
+          }
+        }
 
-      ChatModel chat = ChatModel.fromJson(messageData);
+        // Ordenar la lista por timestamp en orden ascendente
+        chatList.sort((a, b) => a.messages.values.first['timestamp']
+            .compareTo(b.messages.values.first['timestamp']));
 
-      messages.add(chat);
+        print(chatList);
+        return chatList;
+      }
     }
-    print(chatId);
-    print("mensaje get");
-    print(messages);
-    return messages;
+
+    return []; // Documento no encontrado o mensajes vacíos
   }
   // final chatRef = _chatsCollection.doc(chatId).collection('messages');
   // QuerySnapshot querySnapshot =

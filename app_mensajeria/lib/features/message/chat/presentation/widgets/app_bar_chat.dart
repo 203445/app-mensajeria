@@ -15,26 +15,26 @@ class AppBarWidgetChats extends StatefulWidget {
 }
 
 class _AppBarWidgetChats extends State<AppBarWidgetChats> {
-  final String apiURI = 'https://cb2d-187-188-32-68.ngrok-free.app';
+  final String apiURI = 'https://274d-187-188-32-68.ngrok-free.app';
 
   @override
   Widget build(BuildContext context) {
     return Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 1),
+        padding: const EdgeInsets.symmetric(horizontal: 0),
         child: SizedBox(
-          width: MediaQuery.of(context).size.width * 0.50,
+          width: MediaQuery.of(context).size.width * 0.55,
           child: Row(
-            mainAxisAlignment: MainAxisAlignment.end,
+            mainAxisAlignment: MainAxisAlignment.start,
             children: [
               Padding(
-                padding: const EdgeInsets.only(right: 15),
+                padding: const EdgeInsets.only(right: 12),
                 child: CircleAvatar(
                   backgroundImage: Image.network(apiURI + widget.img).image,
                   radius: 34,
                 ),
               ),
               SizedBox(
-                height: MediaQuery.of(context).size.width * 0.12,
+                height: MediaQuery.of(context).size.width * 0.13,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,

@@ -15,8 +15,7 @@ class ChatsList extends StatefulWidget {
   // final String data;
   // final String id;
   const ChatsList(
-      {
-        required this.userFire,
+      {required this.userFire,
       // required this.img,
       // required this.data,
       // required this.id,
@@ -27,7 +26,7 @@ class ChatsList extends StatefulWidget {
 }
 
 class _ChatsListState extends State<ChatsList> {
-  String apiURI = 'https://cb2d-187-188-32-68.ngrok-free.app';
+  String apiURI = 'https://274d-187-188-32-68.ngrok-free.app';
 
   @override
   Widget build(BuildContext context) {
@@ -60,6 +59,7 @@ class _ChatsListState extends State<ChatsList> {
                           final chat = chats[index];
                           final messageContent = chat.messages['content'];
                           final messageTimestamp = chat.messages['timestamp'];
+                          print(messageContent);
                           return Padding(
                             padding: const EdgeInsets.symmetric(
                                 horizontal: 8, vertical: 7),
@@ -103,7 +103,8 @@ class _ChatsListState extends State<ChatsList> {
                                           children: [
                                             Text(
                                               // state.contacts[index].name,
-                                              chat.userEmisorId,
+                                              messageTimestamp,
+                                              // messageTimestamp,
                                               style: const TextStyle(
                                                   fontSize: 20,
                                                   fontWeight: FontWeight.w700),
