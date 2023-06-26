@@ -13,7 +13,7 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
       if (event is GetChatsEvent) {
         emit(ChatLoading());
         try {
-          final List<Chats> chats = await getChatsUsecase.execute();
+          final List<Chats> chats = await getChatsUsecase.execute('jsjsj');
           print(chats);
           emit(ChatLoaded(chats: chats));
         } catch (error) {

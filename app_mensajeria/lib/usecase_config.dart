@@ -5,6 +5,7 @@ import 'package:app_mensajeria/features/message/chat/domain/usecases/upload_mess
 
 import 'features/message/chat/data/datasources/chat_remote_data_source.dart';
 import 'features/message/chat/domain/usecases/create_chats_usecase.dart';
+import 'features/message/chat/domain/usecases/get_chatId_usecase.dart';
 import 'features/message/chat/domain/usecases/get_chats_usecase.dart';
 import 'features/message/users/data/datasources/user_remote.dart';
 import 'features/message/users/data/repositories/user_repository_imp.dart';
@@ -21,6 +22,7 @@ class UsecaseConfig {
   SendMessageUseCase? sendMessageUsecase;
   GetMessageUseCase? getMessageUseCase;
   UploadMediaUseCase? uploadMediaUseCase;
+  GetChatIdUsecase? getChatIdUsecase;
 
   ChatRepositoryImpl? chatRepositoryImpl;
   ChatRemoteDataSourceImp? chatRemoteDataSourceImp;
@@ -34,12 +36,13 @@ class UsecaseConfig {
 
   UserRemoteDataSourceImp? userRemoteDataSourceImp;
   UserRepositoryImp? userRepositoryImp;
-
+  
   UsecaseConfig() {
     chatRemoteDataSourceImp = ChatRemoteDataSourceImp();
     chatRepositoryImpl =
         ChatRepositoryImpl(chatRemoteDataSource: chatRemoteDataSourceImp!);
     getChatsUsecase = GetChatsUsecase(chatRepositoryImpl!);
+    getChatIdUsecase = GetChatIdUsecase(chatRepositoryImpl!);
     createChatsUsecase = CreateChatsUsecase(chatRepositoryImpl!);
     sendMessageUsecase =
         SendMessageUseCase(chatsRepository: chatRepositoryImpl!);

@@ -70,6 +70,24 @@ class ChatModel extends Chats {
     );
   }
 
+  static MessageType _mapIntToMessageType(int type) {
+    switch (type) {
+      case 0:
+        return MessageType.text;
+      case 1:
+        return MessageType.image;
+      case 2:
+        return MessageType.audio;
+      case 3:
+        return MessageType.video;
+      case 4:
+        return MessageType.gif;
+      default:
+        return MessageType.unknown;
+    }
+  }
+
+
   // factory ChatModel.fromDocument(DocumentSnapshot doc) {
   //   final data = doc.data() as Map<String, dynamic>;
   //   // print(data);
@@ -94,21 +112,4 @@ class ChatModel extends Chats {
   //     //     : MessageType.unknown,
   //   );
   // }
-
-  static MessageType _mapIntToMessageType(int type) {
-    switch (type) {
-      case 0:
-        return MessageType.text;
-      case 1:
-        return MessageType.image;
-      case 2:
-        return MessageType.audio;
-      case 3:
-        return MessageType.video;
-      case 4:
-        return MessageType.gif;
-      default:
-        return MessageType.unknown;
-    }
-  }
 }

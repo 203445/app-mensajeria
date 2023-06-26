@@ -14,7 +14,7 @@ class ContactsList extends StatefulWidget {
 }
 
 class _ContactsListState extends State<ContactsList> {
-  String apiURI = 'https://1531-187-188-32-68.ngrok-free.app';
+  String apiURI = 'https://cb2d-187-188-32-68.ngrok-free.app';
 
   @override
   Widget build(BuildContext context) {
@@ -119,7 +119,8 @@ class _ContactsListState extends State<ContactsList> {
                                       builder: (context) => PageChat(
                                           name: state.contacts[index].name,
                                           data: state.contacts[index].data,
-                                          img: state.contacts[index].img)));
+                                          img: state.contacts[index].img,
+                                          userRecp: state.contacts[index].firebaseId)));
                               print(state.contacts[index].name);
                             },
                           ),

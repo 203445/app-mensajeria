@@ -15,7 +15,7 @@ import 'package:flutter/material.dart';
 final auth = FirebaseAuth.instance;
 final dio = Dio();
 
-String apiURI = 'https://1531-187-188-32-68.ngrok-free.app';
+String apiURI = 'https://cb2d-187-188-32-68.ngrok-free.app';
 
 Future<File> getImageFileFromAssets() async {
   const String path = "images/default-user.png";

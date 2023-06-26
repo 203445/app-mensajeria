@@ -7,6 +7,26 @@ enum MessageType {
   unknown,
 }
 
+// Asignar valores enteros a los tipos de mensaje
+extension MessageTypeExtension on MessageType {
+  int get intValue {
+    switch (this) {
+      case MessageType.text:
+        return 0;
+      case MessageType.image:
+        return 1;
+      case MessageType.audio:
+        return 2;
+      case MessageType.video:
+        return 3;
+      case MessageType.gif:
+        return 4;
+      default:
+        return -1;
+    }
+  }
+}
+
 class Chats {
   // final String userId;
   final String userEmisorId;
@@ -15,15 +35,14 @@ class Chats {
   // final String timestamp;
   // final MessageType type;
 
-  Chats(
-      {
-      //required this.userId,
-      required this.userEmisorId,
-      required this.userReceptorId,
-      required this.messages,
-      // required this.timestamp,
-      // required this.type
-      });
+  Chats({
+    //required this.userId,
+    required this.userEmisorId,
+    required this.userReceptorId,
+    required this.messages,
+    // required this.timestamp,
+    // required this.type
+  });
 
   Map<String, dynamic> toMap() {
     return {

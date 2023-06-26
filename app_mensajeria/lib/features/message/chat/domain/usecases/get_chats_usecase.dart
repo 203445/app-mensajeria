@@ -6,7 +6,7 @@ class GetChatsUsecase {
 
   GetChatsUsecase(this.chatsRepository);
 
-  Future<List<Chats>> execute() async {
-    return await chatsRepository.getChats();
+  Future<List<Chats>> execute(id) async {
+    return await chatsRepository.getChats(id);
   }
 }

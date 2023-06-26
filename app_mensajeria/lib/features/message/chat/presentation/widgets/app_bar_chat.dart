@@ -15,7 +15,7 @@ class AppBarWidgetChats extends StatefulWidget {
 }
 
 class _AppBarWidgetChats extends State<AppBarWidgetChats> {
-  final String apiURI = 'https://1531-187-188-32-68.ngrok-free.app';
+  final String apiURI = 'https://cb2d-187-188-32-68.ngrok-free.app';
 
   @override
   Widget build(BuildContext context) {
@@ -27,7 +27,7 @@ class _AppBarWidgetChats extends State<AppBarWidgetChats> {
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
               Padding(
-                padding: const EdgeInsets.only(right: 20),
+                padding: const EdgeInsets.only(right: 15),
                 child: CircleAvatar(
                   backgroundImage: Image.network(apiURI + widget.img).image,
                   radius: 34,
