@@ -12,6 +12,7 @@ import 'features/message/users/data/repositories/user_repository_imp.dart';
 import 'features/message/users/domain/usecases/add_contact.dart';
 import 'features/message/users/domain/usecases/create_profile_usecase.dart';
 import 'features/message/users/domain/usecases/get_contacts_usecase.dart';
+import 'features/message/users/domain/usecases/get_userFirebase.dart';
 import 'features/message/users/domain/usecases/get_user_usecase.dart';
 import 'features/message/users/domain/usecases/update_profile.dart';
 import 'features/message/users/domain/usecases/verify_user_existence_usecase.dart';
@@ -33,10 +34,11 @@ class UsecaseConfig {
   GetContactsUseCase? getContactsUseCase;
   UpdateProfileUseCase? updateProfileUseCase;
   GetUserUseCase? getUserUseCase;
+  GetUserFirebaseUseCase? getUserFirebaseUsecase;
 
   UserRemoteDataSourceImp? userRemoteDataSourceImp;
   UserRepositoryImp? userRepositoryImp;
-  
+
   UsecaseConfig() {
     chatRemoteDataSourceImp = ChatRemoteDataSourceImp();
     chatRepositoryImpl =
@@ -58,5 +60,6 @@ class UsecaseConfig {
     getContactsUseCase = GetContactsUseCase(userRepositoryImp!);
     updateProfileUseCase = UpdateProfileUseCase(userRepositoryImp!);
     getUserUseCase = GetUserUseCase(userRepositoryImp!);
+    getUserFirebaseUsecase = GetUserFirebaseUseCase(userRepositoryImp!);
   }
 }

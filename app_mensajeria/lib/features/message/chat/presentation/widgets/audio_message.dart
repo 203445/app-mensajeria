@@ -56,7 +56,7 @@ class _AudioMessageState extends State<AudioMessage> {
               _isPlaying ? Icons.pause : Icons.play_arrow,
               color: Colors.black,
             ),
-            Text(
+           const Text(
               'Reproducir audio',
               style: TextStyle(
                 color: Colors.black,

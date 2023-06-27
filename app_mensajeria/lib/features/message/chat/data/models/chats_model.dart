@@ -3,54 +3,49 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 class ChatModel extends Chats {
   ChatModel({
-    // required String userId,
+    
     required String userEmisorId,
     required String userReceptorId,
     required Map<String, dynamic> messages,
-    // required String timestamp,
-    // required MessageType type,
+   
   }) : super(
-          // userId: userId,
+          
           userEmisorId: userEmisorId,
           userReceptorId: userReceptorId,
           messages: messages,
-          // timestamp: timestamp,
-          // type: type
+      
         );
 
   factory ChatModel.fromJson(Map<String, dynamic> json) {
     return ChatModel(
-      // userId: json['userId'],
+      
       userEmisorId: json['userEmisorId'],
       userReceptorId: json['userReceptorId'],
       messages: json['messages'],
-      // timestamp: json['timestamp'],
-      // type: _mapIntToMessageType(json['type'])
+     
     );
   }
 
   factory ChatModel.fromEntity(Chats chats) {
     return ChatModel(
-      // userId: '', // Establece el valor correcto del ID del chat
+    
       userEmisorId:
           chats.userEmisorId, // Establece el ID del emisor correctamente
       userReceptorId:
           chats.userReceptorId, // Establece el ID del receptor correctamente
       messages: chats
-          .messages, // Puedes establecer mensajes vacíos o manejarlos de otra manera
-      // timestamp: chats.timestamp,
-      // type: chats.type
+          .messages, 
+   
     );
   }
 
   Map<String, dynamic> toJson() {
     return {
-      // 'userId': userId,
+     
       'userEmisorId': userEmisorId,
       'userReceptorId': userReceptorId,
       'messages': messages,
-      // 'timestamp': timestamp,
-      // 'type': type
+    
     };
   }
 
@@ -86,30 +81,4 @@ class ChatModel extends Chats {
         return MessageType.unknown;
     }
   }
-
-
-  // factory ChatModel.fromDocument(DocumentSnapshot doc) {
-  //   final data = doc.data() as Map<String, dynamic>;
-  //   // print(data);
-  //   // return data;
-  //   // final String messagesData = data['messages'];
-  //   final List<dynamic>? messagesData = data['messages'];
-
-  //   List<String> messages = [];
-  //   if (messagesData != null) {
-  //     messages = messagesData.map((message) => message.toString()).toList();
-  //   }
-
-  //   return ChatModel(
-  //     // userId: doc.id,
-  //     // userId: data  ['userId'],
-  //     userEmisorId: data['userEmisorId'],
-  //     userReceptorId: data['userReceptorId'],
-  //     messages: messages,
-  //     // // timestamp: data['timestamp'],
-  //     // type: data['type'] != null
-  //     //     ? _mapIntToMessageType(data['type'] as int)
-  //     //     : MessageType.unknown,
-  //   );
-  // }
 }

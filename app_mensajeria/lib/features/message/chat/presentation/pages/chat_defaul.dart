@@ -3,15 +3,12 @@ import 'package:app_mensajeria/features/message/chat/domain/entities/chats.dart'
 import 'package:app_mensajeria/features/message/chat/presentation/widgets/app_bar_chat.dart';
 import 'package:app_mensajeria/features/message/chat/presentation/widgets/messages_bubble.dart';
 import 'package:app_mensajeria/usecase_config.dart';
-// import 'package:app_mensajeria/features/message/users/domain/entities/users.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:app_mensajeria/styles.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
-import '../../../../../main.dart';
 
 class PageChat extends StatefulWidget {
   final String name;
@@ -60,14 +57,6 @@ class _HomePageState extends State<PageChat> with TickerProviderStateMixin {
     } else {
       print("no hay nada para mostrar");
     }
-
-    // print(messages);
-    setState(() {
-      // _messages = messages
-      //     .map((message) =>
-      //         Message(type: message.type, content: message.content))
-      //     .toList();
-    });
   }
 
   Future<void> _selectImage() async {
@@ -154,10 +143,8 @@ class _HomePageState extends State<PageChat> with TickerProviderStateMixin {
 
   Future<void> _sendMessage(MessageType messageType, String videoUrl) async {
     print("print aqui");
-    // final text = _textController.text;
     MessageType messageType =
         MessageType.text; // Valor predeterminado o tipo de mensaje
-
     if (_selectedImage != null) {
       messageType = MessageType.image;
       // Enviar imagen
@@ -274,14 +261,8 @@ class _HomePageState extends State<PageChat> with TickerProviderStateMixin {
                           final message = chat[messageId];
                           final content = message['content'];
                           final type = message['type'];
-                          final isEmisor =
-                              currentUser!.uid == messages[item].userEmisorId;
-
-                          // Establecer el alineamiento del MessageBubble
-                          final alignment = isEmisor
-                              ? Alignment.centerLeft
-                              : Alignment.centerRight;
-
+                          final uid = message['userId'];
+                          final isEmisor = currentUser!.uid == uid;
                           return Message(
                             text: message['type'] == 0 ? content : '',
                             typeimage: message['type'] == 1 ? content : '',
@@ -307,7 +288,10 @@ class _HomePageState extends State<PageChat> with TickerProviderStateMixin {
                         controller: _textController,
                         decoration: InputDecoration(
                           filled: true,
-                          fillColor: DarkModeColors.textfill,
+                          fillColor:
+                              Theme.of(context).brightness == Brightness.dark
+                                  ? DarkModeColors.textfill
+                                  : LightModeColors.textbubble,
                           hintText: 'Escribe un mensaje...',
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(16),
@@ -407,10 +391,3 @@ class _HomePageState extends State<PageChat> with TickerProviderStateMixin {
     );
   }
 }
-
-
-  // tabController.addListener(() {
-    //   context
-    //       .read<UsersBloc>()
-    //       .add(HomeNavegation(id: widget.user.id, index: tabController.index));
-    // });

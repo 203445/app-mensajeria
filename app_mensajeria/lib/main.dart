@@ -16,6 +16,7 @@ void main() async {
   runApp(const MyApp());
 }
 
+
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
@@ -34,7 +35,8 @@ class MyApp extends StatelessWidget {
               addContactUseCase: usecaseConfig.addContactUseCase!,
               getContactsUseCase: usecaseConfig.getContactsUseCase!,
               updateProfileUseCase: usecaseConfig.updateProfileUseCase!,
-              getUserUseCase: usecaseConfig.getUserUseCase!),
+              getUserUseCase: usecaseConfig.getUserUseCase!,
+              getChatsUsecase: usecaseConfig.getChatsUsecase!),
         ),
       ],
       child: MaterialApp(

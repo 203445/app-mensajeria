@@ -13,7 +13,10 @@ class LoadedContacts extends UsersState {
   LoadedContacts({required this.contacts});
 }
 
-class LoadedChats extends UsersState {}
+class LoadedChats extends UsersState {
+  final List<User> contacts;
+  LoadedChats({required this.contacts});
+}
 
 class LoadedUser extends UsersState {
   final User user;
@@ -30,7 +33,7 @@ class UserCreated extends UsersState {
   UserCreated({required this.user});
 }
 
-class UserEdited extends UsersState { 
+class UserEdited extends UsersState {
   final User user;
   UserEdited({required this.user});
 }

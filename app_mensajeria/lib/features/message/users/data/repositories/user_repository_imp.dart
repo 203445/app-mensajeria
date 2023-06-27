@@ -16,8 +16,10 @@ class UserRepositoryImp implements UserRepository {
   }
 
   @override
-  Future<User?> createProfile(String name, String data, File? img, String email, String password) async {
-    return await userRemoteDataSource.createProfile(name, data, img, email, password);
+  Future<User?> createProfile(String name, String data, File? img, String email,
+      String password) async {
+    return await userRemoteDataSource.createProfile(
+        name, data, img, email, password);
   }
 
   @override
@@ -31,7 +33,8 @@ class UserRepositoryImp implements UserRepository {
   }
 
   @override
-  Future<bool> updateProfile(String id, String name, String data, File? img) async {
+  Future<bool> updateProfile(
+      String id, String name, String data, File? img) async {
     return await userRemoteDataSource.updateProfile(id, name, data, img);
   }
 
@@ -40,4 +43,8 @@ class UserRepositoryImp implements UserRepository {
     return await userRemoteDataSource.getUser(id);
   }
 
+  @override
+  Future<User?> getFireId(String idFirebase) async {
+    return await userRemoteDataSource.getFireId(idFirebase);
+  }
 }
