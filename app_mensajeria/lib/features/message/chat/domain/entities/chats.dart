@@ -28,26 +28,24 @@ extension MessageTypeExtension on MessageType {
 }
 
 class Chats {
-
+  final String id;
   final String userEmisorId;
   final String userReceptorId;
   final Map<String, dynamic> messages;
-  
 
   Chats({
-    
+    required this.id,
     required this.userEmisorId,
     required this.userReceptorId,
     required this.messages,
-   
   });
 
   Map<String, dynamic> toMap() {
     return {
+      'id:': id,
       'userEmisorId': userEmisorId,
       'userReceptorId': userReceptorId,
       'messages': messages,
-     
     };
   }
 }

@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 import 'package:app_mensajeria/features/message/chat/domain/entities/chats.dart';
 import 'package:app_mensajeria/features/message/chat/presentation/widgets/app_bar_chat.dart';
@@ -10,18 +11,22 @@ import 'package:flutter/material.dart';
 import 'package:app_mensajeria/styles.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../data/models/chats_model.dart';
+
 class PageChat extends StatefulWidget {
   final String name;
   final String data;
   final String img;
   final String userRecp;
-  const PageChat(
-      {Key? key,
-      required this.name,
-      required this.data,
-      required this.img,
-      required this.userRecp})
-      : super(key: key);
+  // final String id;
+  const PageChat({
+    Key? key,
+    required this.name,
+    required this.data,
+    required this.img,
+    required this.userRecp,
+    // required this.id
+  }) : super(key: key);
 
   @override
   State<PageChat> createState() => _HomePageState();
@@ -35,10 +40,12 @@ class _HomePageState extends State<PageChat> with TickerProviderStateMixin {
   File? _selectedVideo;
   File? _selectedAudio;
   File? _selectedGif;
+  late String chatId = '';
 
   @override
   void initState() {
     super.initState();
+    _getChatId();
     _loadMessages();
   }
 
@@ -48,12 +55,24 @@ class _HomePageState extends State<PageChat> with TickerProviderStateMixin {
     super.dispose();
   }
 
-  Future<void> _loadMessages() async {
-    final id = await usecaseConfig.getChatIdUsecase!
-        .execute(currentUser?.uid, widget.userRecp);
+  Future<void> _getChatId() async {
+    List<Chats> chatList =
+        await usecaseConfig.getChatsUsecase!.execute(widget.userRecp);
+    if (chatList.isNotEmpty) {
+      setState(() {
+        chatId = chatList[0].id;
+        print(chatId);
+      });
+    } else {
+      setState(() {
+        chatId = ''; // Valor predeterminado si no hay chats en la lista
+      });
+    }
+  }
 
-    if (id != null) {
-      final messages = await usecaseConfig.getMessageUseCase!.execute(id);
+  Future<void> _loadMessages() async {
+    if (chatId.isNotEmpty) {
+      final messages = await usecaseConfig.getMessageUseCase!.execute(chatId);
     } else {
       print("no hay nada para mostrar");
     }
@@ -166,15 +185,24 @@ class _HomePageState extends State<PageChat> with TickerProviderStateMixin {
       // Enviar mensaje de texto
       // ...
     }
-    await usecaseConfig.createChatsUsecase!
+    List<ChatModel> chatList = await usecaseConfig.createChatsUsecase!
         .execute(currentUser?.uid, widget.userRecp);
 
-    // Crear el objeto del mensaje con los datos necesarios
-    final chatId = await usecaseConfig.getChatIdUsecase!
-        .execute(currentUser?.uid, widget.userRecp);
+    for (var chat in chatList) {
+      String id = chat.id;
+      String userEmisorId = chat.userEmisorId;
+      String userReceptorId = chat.userReceptorId;
+      Map<String, dynamic> messages = chat.messages;
 
-    await usecaseConfig.sendMessageUsecase!
-        .execute(chatId!, videoUrl, messageType.intValue, currentUser!.uid);
+      // Hacer algo con los datos de cada chat
+      // Por ejemplo, imprimirlos
+      print('ID del chat: $id');
+      print('ID del usuario emisor: $userEmisorId');
+      print('ID del usuario receptor: $userReceptorId');
+      print('Mensajes: $messages');
+      await usecaseConfig.sendMessageUsecase!
+          .execute(id, videoUrl, messageType.intValue, currentUser!.uid);
+    }
 
     _textController.clear();
     _loadMessages();

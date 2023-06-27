@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:convert';
 
 import 'package:app_mensajeria/features/message/chat/data/models/chats_model.dart';
 import 'package:app_mensajeria/features/message/chat/domain/entities/chats.dart';
@@ -7,7 +8,7 @@ import 'package:firebase_storage/firebase_storage.dart';
 
 abstract class ChatRemoteDataSource {
   Future<List<ChatModel>> getChats(String id);
-  Future<void> createChat(String userEmisor, String userReceptor);
+  Future<List<ChatModel>> createChat(String userEmisor, String userReceptor);
   Future<String?> getChatId(String userEmisor, String userReceptor);
   Future<void> sendMessage(
       String chatId, String message, int type, String userId);
@@ -42,10 +43,12 @@ class ChatRemoteDataSourceImp implements ChatRemoteDataSource {
 
       final userEmisorId = data['userEmisorId'];
       final userReceptorId = data['userReceptorId'];
+      final chatId = doc.id;
 
       // Verificar si el ID coincide con userEmisorId o userReceptorId
       if (userEmisorId == id || userReceptorId == id) {
         final chat = ChatModel(
+          id: chatId,
           userEmisorId: userEmisorId,
           userReceptorId: userReceptorId,
           messages: {
@@ -78,7 +81,8 @@ class ChatRemoteDataSourceImp implements ChatRemoteDataSource {
   }
 
   @override
-  Future<void> createChat(String userEmisor, String userReceptor) async {
+  Future<List<ChatModel>> createChat(
+      String userEmisor, String userReceptor) async {
     String generateGroupId(String userEmisor, String userReceptor) {
       // Ordena los IDs de los usuarios alfabéticamente para garantizar consistencia
       List<String> sortedIds = [userEmisor, userReceptor]..sort();
@@ -97,11 +101,23 @@ class ChatRemoteDataSourceImp implements ChatRemoteDataSource {
     if (!chatDoc.exists) {
       // Si el chat no existe, crea un nuevo documento para el chat
       await _chatsCollection.doc(groupId).set({
+        'id': groupId,
         'userEmisorId': userEmisor,
         'userReceptorId': userReceptor,
-        'messages': [],
+        'messages': {},
       });
     }
+
+    // Crea una instancia de ChatModel con los valores deseados
+    ChatModel chat = ChatModel(
+      id: groupId,
+      userEmisorId: userEmisor,
+      userReceptorId: userReceptor,
+      messages: {},
+    );
+
+    // Retorna una lista que contiene el objeto ChatModel
+    return [chat];
   }
 
   @override
@@ -133,6 +149,7 @@ class ChatRemoteDataSourceImp implements ChatRemoteDataSource {
         for (var messageData in messagesData) {
           if (messageData['content'] != null) {
             final chat = ChatModel(
+              id: data['id'],
               userEmisorId: data['userEmisorId'],
               userReceptorId: data['userReceptorId'],
               messages: {

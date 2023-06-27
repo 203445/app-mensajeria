@@ -23,7 +23,7 @@ class EditProfilePage extends StatefulWidget {
 class _EditProfilePageState extends State<EditProfilePage> {
   
   String apiURI =
-    'https://7b12-187-188-32-68.ngrok-free.app';
+    'https://66e3-187-188-32-68.ngrok-free.app';
   final dio = Dio();
 
   

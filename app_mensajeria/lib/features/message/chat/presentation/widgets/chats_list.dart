@@ -4,6 +4,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 import '../../../../../styles.dart';
+import '../../data/models/chats_model.dart';
 import '../../domain/entities/chats.dart';
 
 class ChatsList extends StatefulWidget {
@@ -26,7 +27,7 @@ class ChatsList extends StatefulWidget {
 }
 
 class _ChatsListState extends State<ChatsList> {
-  String apiURI = 'https://7b12-187-188-32-68.ngrok-free.app';
+  String apiURI = 'https://66e3-187-188-32-68.ngrok-free.app';
   final UsecaseConfig usecaseConfig = UsecaseConfig();
   final User? currentUser = FirebaseAuth.instance.currentUser;
 
@@ -57,6 +58,7 @@ class _ChatsListState extends State<ChatsList> {
                         child: Text('Error al cargar los chats'));
                   } else {
                     final chats = snapshot.data ?? [];
+
                     return SingleChildScrollView(
                       child: ListView.separated(
                         physics: const NeverScrollableScrollPhysics(),
@@ -67,9 +69,12 @@ class _ChatsListState extends State<ChatsList> {
                           final messageContent = chat.messages['content'];
                           final type = chats[index].messages['type'];
                           final timestamp = chat.messages['timestamp'];
+                          print("hola aqui es  la prueba");
+                          print(chat.id);
+
                           DateTime dateTime =
                               DateTime.fromMillisecondsSinceEpoch(
-                                  int.parse(timestamp));
+                                  int.tryParse(timestamp) ?? 00);
                           int hour = dateTime.hour;
                           int minute = dateTime.minute;
                           int hour12 = hour > 12 ? hour - 12 : hour;
@@ -85,7 +90,7 @@ class _ChatsListState extends State<ChatsList> {
                               child: GestureDetector(
                                 child: Container(
                                   height: 90,
-                                  width: double.infinity, 	
+                                  width: double.infinity,
                                   decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(10),
                                     boxShadow: [
@@ -177,6 +182,7 @@ class _ChatsListState extends State<ChatsList> {
                                                 data: widget.data,
                                                 img: widget.img,
                                                 userRecp: widget.userRecp,
+                                                // id: chat.id,
                                               )));
                                 },
                               ),

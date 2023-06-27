@@ -12,7 +12,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 final auth = FirebaseAuth.instance;
 final dio = Dio();
 
-String apiURI = 'https://7b12-187-188-32-68.ngrok-free.app';
+String apiURI = 'https://66e3-187-188-32-68.ngrok-free.app';
 
 Future<File> getImageFileFromAssets() async {
   const String path = "images/default-user.png";
@@ -187,7 +187,6 @@ class UserRemoteDataSourceImp implements UserRemoteDataSource {
     FormData formData = FormData.fromMap({
       "firebaseId": idFirebase,
     });
-    print("aqui vavavava");
     final response = await dio.get("$apiURI/users/fire/", data: formData);
 
     if (response.statusCode == 200) {

@@ -155,7 +155,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                             child: Column(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                ContactsList(widget.user.firebaseId),
+                                ContactsList(),
                                 Align(
                                   alignment: Alignment.bottomRight,
                                   child: FloatingActionButton(
