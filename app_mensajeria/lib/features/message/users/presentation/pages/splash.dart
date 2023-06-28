@@ -21,7 +21,7 @@ class _SplashPageState extends State<SplashPage> {
             ? DarkModeColors.backgroundColor
             : LightModeColors.backgroundColor,
         body: FutureBuilder(
-            future: Future.delayed(const Duration(milliseconds: 1000), () {
+            future: Future.delayed(const Duration(milliseconds: 2500), () {
               Navigator.push(context,
                   MaterialPageRoute(builder: (context) => LoginPage()));
             }),
@@ -31,17 +31,21 @@ class _SplashPageState extends State<SplashPage> {
                   padding:
                       const EdgeInsets.symmetric(horizontal: 25, vertical: 30),
                   child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Image.asset(
                         Theme.of(context).brightness == Brightness.dark
                             ? "assets/images/Logo_darkmode.png"
                             : "assets/images/Logo_lightmode.png",
-                        height: MediaQuery.of(context).size.height * 0.25,
+                        height: MediaQuery.of(context).size.height * 0.175,
                       ),
-                      CircularProgressIndicator(
-                        color: Theme.of(context).brightness == Brightness.dark
-                            ? DarkModeColors.accentColor
-                            : LightModeColors.accentColor,
+                      Padding(
+                        padding: const EdgeInsets.only(top: 30),
+                        child: CircularProgressIndicator(
+                          color: Theme.of(context).brightness == Brightness.dark
+                              ? DarkModeColors.accentColor
+                              : LightModeColors.accentColor,
+                        ),
                       )
                     ],
                   ),
