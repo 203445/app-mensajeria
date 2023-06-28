@@ -21,7 +21,7 @@ class ChatRepositoryImpl implements ChatsRepository {
   }
 
   @override
-  Future<void> createChats(String userEmisor, String userReceptor) async {
+  Future<List<ChatModel>> createChats(String userEmisor, String userReceptor) async {
     return await chatRemoteDataSource.createChat(userEmisor, userReceptor);
   }
 

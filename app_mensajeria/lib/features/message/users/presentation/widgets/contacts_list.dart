@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:app_mensajeria/features/message/chat/presentation/pages/chat_defaul.dart';
 import 'package:flutter/material.dart';
 
@@ -7,14 +9,19 @@ import '../../../../../styles.dart';
 import '../bloc/users_bloc.dart';
 
 class ContactsList extends StatefulWidget {
-  const ContactsList(String firebaseId, {super.key});
+  const ContactsList({super.key});
 
   @override
   State<ContactsList> createState() => _ContactsListState();
 }
 
 class _ContactsListState extends State<ContactsList> {
-  String apiURI = 'https://85c1-190-123-41-228.ngrok-free.app';
+  String apiURI = 'https://66e3-187-188-32-68.ngrok-free.app';
+
+  @override
+  void initState() {
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -117,12 +124,13 @@ class _ContactsListState extends State<ContactsList> {
                                   context,
                                   MaterialPageRoute(
                                       builder: (context) => PageChat(
-                                          name: state.contacts[index].name,
-                                          data: state.contacts[index].data,
-                                          img: state.contacts[index].img,
-                                          userRecp: state
-                                              .contacts[index].firebaseId)));
-                              print(state.contacts[index].name);
+                                            name: state.contacts[index].name,
+                                            data: state.contacts[index].data,
+                                            img: state.contacts[index].img,
+                                            userRecp: state
+                                                .contacts[index].firebaseId,
+                                          
+                                          )));
                             },
                           ),
                         );

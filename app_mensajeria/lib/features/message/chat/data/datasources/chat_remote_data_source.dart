@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:convert';
 
 import 'package:app_mensajeria/features/message/chat/data/models/chats_model.dart';
 import 'package:app_mensajeria/features/message/chat/domain/entities/chats.dart';
@@ -7,7 +8,7 @@ import 'package:firebase_storage/firebase_storage.dart';
 
 abstract class ChatRemoteDataSource {
   Future<List<ChatModel>> getChats(String id);
-  Future<void> createChat(String userEmisor, String userReceptor);
+  Future<List<ChatModel>> createChat(String userEmisor, String userReceptor);
   Future<String?> getChatId(String userEmisor, String userReceptor);
   Future<void> sendMessage(
       String chatId, String message, int type, String userId);
@@ -20,15 +21,6 @@ class ChatRemoteDataSourceImp implements ChatRemoteDataSource {
       FirebaseFirestore.instance.collection('chats');
   FirebaseFirestore db = FirebaseFirestore.instance;
 
-  // @override
-  // Future<List<ChatModel>> getChats() async {
-  //   final snapshot = await _chatsCollection.get();
-  //   final chatsList =
-  //       snapshot.docs.map((doc) => ChatModel.fromDocument(doc)).toList();
-  //   print(chatsList);
-  //   return chatsList;
-  // }
-
   @override
   Future<List<ChatModel>> getChats(String id) async {
     final snapshot = await _chatsCollection.get();
@@ -40,24 +32,29 @@ class ChatRemoteDataSourceImp implements ChatRemoteDataSource {
 
       String lastMessageContent = '';
       String lastMessageTimestamp = '';
+      String type = '';
 
       if (messagesData != null && messagesData.isNotEmpty) {
         final lastMessage = messagesData.last;
         lastMessageContent = lastMessage['content'] ?? '';
         lastMessageTimestamp = lastMessage['timestamp'] ?? '';
+        type = lastMessage['type'].toString() ?? '';
       }
 
       final userEmisorId = data['userEmisorId'];
       final userReceptorId = data['userReceptorId'];
+      final chatId = doc.id;
 
       // Verificar si el ID coincide con userEmisorId o userReceptorId
       if (userEmisorId == id || userReceptorId == id) {
         final chat = ChatModel(
+          id: chatId,
           userEmisorId: userEmisorId,
           userReceptorId: userReceptorId,
           messages: {
             'content': lastMessageContent,
             'timestamp': lastMessageTimestamp,
+            'type': type
           },
         );
 
@@ -67,56 +64,6 @@ class ChatRemoteDataSourceImp implements ChatRemoteDataSource {
     return chatsList;
   }
 
-  // List chats = [];
-
-  // CollectionReference collectionReferenceChats = db.collection('chat');
-
-  // QuerySnapshot querychats = await collectionReferenceChats.get();
-
-  // for (var doc in querychats.docs) {
-  //   final Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
-  //   final id = doc.id;
-
-  //   final chat = {
-  //     'userEmisorId': data['userEmisorId'],
-  //     'id': doc.id,
-  //     'userReceptorId': data['userReceptorId'],
-  //   };
-  //   CollectionReference collectionReferenceMessages =
-  //       db.collection('chat').doc(id).collection('messagess');
-  //   QuerySnapshot querymessages = await collectionReferenceMessages.get();
-
-  //   for (var doc in querymessages.docs) {
-  //     final Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
-
-  //     final chat2 = {
-  //       'messages': data['messages'],
-  //       'userId': data['userId'],
-  //       'timestamp': data['timestamp'],
-  //       'type': data['type'],
-  //     };
-
-  //     final mergedChat = {};
-  //     mergedChat.addAll(chat);
-  //     mergedChat.addAll(chat2);
-  //     chats.add(mergedChat);
-  //     print(chats);
-  //   }
-  // }
-  // // }
-
-  // // return chats.map<ChatModel>((data) => ChatModel.fromJson(data)).toList();
-  // // return chats.map<ChatModel>((data) => ChatModel.fromJson(data)).toList();
-  // return chats
-  //     .map<ChatModel>(
-  //         (data) => ChatModel.fromJson(Map<String, dynamic>.from(data)))
-  //     .toList();
-
-  // return chats
-  //     .map<ChatModel>(
-  //         (data) => ChatModel.fromJson(data as Map<String, dynamic>))
-  // .toList();
-  // }
   @override
   Future<String?> getChatId(String userEmisorId, String userReceptorId) async {
     final querySnapshot = await _chatsCollection
@@ -134,7 +81,8 @@ class ChatRemoteDataSourceImp implements ChatRemoteDataSource {
   }
 
   @override
-  Future<void> createChat(String userEmisor, String userReceptor) async {
+  Future<List<ChatModel>> createChat(
+      String userEmisor, String userReceptor) async {
     String generateGroupId(String userEmisor, String userReceptor) {
       // Ordena los IDs de los usuarios alfabéticamente para garantizar consistencia
       List<String> sortedIds = [userEmisor, userReceptor]..sort();
@@ -153,11 +101,23 @@ class ChatRemoteDataSourceImp implements ChatRemoteDataSource {
     if (!chatDoc.exists) {
       // Si el chat no existe, crea un nuevo documento para el chat
       await _chatsCollection.doc(groupId).set({
+        'id': groupId,
         'userEmisorId': userEmisor,
         'userReceptorId': userReceptor,
-        'messages': [],
+        'messages': {},
       });
     }
+
+    // Crea una instancia de ChatModel con los valores deseados
+    ChatModel chat = ChatModel(
+      id: groupId,
+      userEmisorId: userEmisor,
+      userReceptorId: userReceptor,
+      messages: {},
+    );
+
+    // Retorna una lista que contiene el objeto ChatModel
+    return [chat];
   }
 
   @override
@@ -189,6 +149,7 @@ class ChatRemoteDataSourceImp implements ChatRemoteDataSource {
         for (var messageData in messagesData) {
           if (messageData['content'] != null) {
             final chat = ChatModel(
+              id: data['id'],
               userEmisorId: data['userEmisorId'],
               userReceptorId: data['userReceptorId'],
               messages: {
@@ -216,57 +177,6 @@ class ChatRemoteDataSourceImp implements ChatRemoteDataSource {
 
     return []; // Documento no encontrado o mensajes vacíos
   }
-  // final chatRef = _chatsCollection.doc(chatId).collection('messages');
-  // QuerySnapshot querySnapshot =
-  //     await chatRef.orderBy('timestamp', descending: false).get();
-  // List<ChatModel> messages = [];
-
-  // for (QueryDocumentSnapshot documentSnapshot in querySnapshot.docs) {
-  //   Map<String, dynamic>? data = documentSnapshot.data() as Map<String, dynamic>?;
-  //   List<dynamic> messageList = data?['messages'];
-
-  //   ChatModel chat = ChatModel(
-  //     userEmisorId: data['userEmisor'],
-  //     userReceptorId: data['userReceptor'],
-  //     messages: messageList,
-  //   );
-
-  //   messages.add(chat);
-  // }
-
-  // return messages;
-  // final document = await _chatsCollection.doc(chatId).get();
-
-  // if (document.exists) {
-  //   final data = document.data() as Map<String, dynamic>;
-  //   final List<dynamic>? messagesData = data['messages'];
-
-  //   Map<String, dynamic> messages =
-  //       [] as Map<String, dynamic>; // Cambiado de nullable a una lista vacía
-
-  //   if (messagesData != null && messagesData.isNotEmpty) {
-  //     messages = messagesData
-  //         .map((messageData) => messageData['content']
-  //             as String?) // Asegurarse de que el contenido sea de tipo String
-  //         .where((message) =>
-  //             message != null) // Eliminar los mensajes nulos, si los hay
-  //         .cast<
-  //             String>() as Map<String,
-  //         dynamic>; // Asegurarse de que los elementos sean de tipo String
-  //     // .toList();
-  //   }
-
-  //   final chat = ChatModel(
-  //     userEmisorId: data['userEmisorId'],
-  //     userReceptorId: data['userReceptorId'],
-  //     messages: messages,
-  //   );
-
-  //   return [chat]; // Devuelve una lista con un solo elemento
-  // } else {
-  //   return []; // Documento no encontrado
-  // }
-  // }
 
   String _getRepresentation(MessageType type, dynamic content) {
     if (type == MessageType.text) {
@@ -312,83 +222,3 @@ class ChatRemoteDataSourceImp implements ChatRemoteDataSource {
     return url;
   }
 }
-
-
-// final chatRef = _chatsCollection.doc(chatId).collection('messagess');
-    // final snapshot = await chatRef.get();
-    // final chatData = snapshot.docChanges;
-
-    // print(chatData);
-
-    // if (chatData != null && chatData.containsKey('messages')) {
-    //   final messagesData = chatData['messages'] as List<dynamic>;
-    //   final List<Message> messages = [];
-
-    //   for (var value in messagesData) {
-    //     final int messageType = value['type'];
-    //     final dynamic messageContent = value['content'];
-
-    //     final MessageType type = _getTypeFromValue(messageType);
-
-    //     if (type != MessageType.unknown) {
-    //       final String representation =
-    //           _getRepresentation(type, messageContent);
-    //       messages.add(Message(type: type, content: representation));
-    //     }
-    //   }
-
-    //   return messages;
-    // }
-
-    // return [];
-    // List messages = [];
-    // CollectionReference collectionReferenceGames =
-    //     db.collection('chats').doc(chatId).collection('messages');
-
-    // QuerySnapshot queryGames = await collectionReferenceGames.get();
-
-    // for (var doc in queryGames.docs) {
-    //   final Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
-
-    //   final chat = {
-    //     'messages': data['messages'],
-    //     'timestamp': data['timestamp'],
-    //     'type': data['type'],
-    //     'userId': data['userId']
-    //   };
-
-    //   messages.add(chat);
-    // }
-    // return messages
-    //     .map<ChatModel>(
-    //         (data) => ChatModel.fromJson(Map<String, dynamic>.from(data)))
-    //     .toList();
-
-    // final snapshot = await _chatsCollection.get();
-
-    // List<ChatModel> chatsList = [];
-    // for (var doc in snapshot.docs) {
-    //   final data = doc.data() as Map<String, dynamic>;
-    //   final List<dynamic>? messagesData = data['messages'];
-
-    //   String lastMessageContent = '';
-    //   String lastMessageTimestamp = '';
-
-    //   if (messagesData != null && messagesData.isNotEmpty) {
-    //     final lastMessage = messagesData.last;
-    //     lastMessageContent = lastMessage['content'] ?? '';
-    //     lastMessageTimestamp = lastMessage['timestamp'] ?? '';
-    //   }
-
-    //   final chat = ChatModel(
-    //     userEmisorId: data['userEmisorId'],
-    //     userReceptorId: data['userReceptorId'],
-    //     messages: {
-    //       'content': lastMessageContent,
-    //       'timestamp': lastMessageTimestamp,
-    //     },
-    //   );
-
-    //   chatsList.add(chat);
-    // }
-    // return chatsList;

@@ -1,9 +1,9 @@
+import 'dart:convert';
 import 'dart:io';
 import 'package:app_mensajeria/features/message/chat/domain/entities/chats.dart';
 import 'package:app_mensajeria/features/message/chat/presentation/widgets/app_bar_chat.dart';
 import 'package:app_mensajeria/features/message/chat/presentation/widgets/messages_bubble.dart';
 import 'package:app_mensajeria/usecase_config.dart';
-// import 'package:app_mensajeria/features/message/users/domain/entities/users.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -11,20 +11,22 @@ import 'package:flutter/material.dart';
 import 'package:app_mensajeria/styles.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../../../../../main.dart';
+import '../../data/models/chats_model.dart';
 
 class PageChat extends StatefulWidget {
   final String name;
   final String data;
   final String img;
   final String userRecp;
-  const PageChat(
-      {Key? key,
-      required this.name,
-      required this.data,
-      required this.img,
-      required this.userRecp})
-      : super(key: key);
+  // final String id;
+  const PageChat({
+    Key? key,
+    required this.name,
+    required this.data,
+    required this.img,
+    required this.userRecp,
+    // required this.id
+  }) : super(key: key);
 
   @override
   State<PageChat> createState() => _HomePageState();
@@ -38,10 +40,12 @@ class _HomePageState extends State<PageChat> with TickerProviderStateMixin {
   File? _selectedVideo;
   File? _selectedAudio;
   File? _selectedGif;
+  late String chatId = '';
 
   @override
   void initState() {
     super.initState();
+    _getChatId();
     _loadMessages();
   }
 
@@ -51,23 +55,27 @@ class _HomePageState extends State<PageChat> with TickerProviderStateMixin {
     super.dispose();
   }
 
-  Future<void> _loadMessages() async {
-    final id = await usecaseConfig.getChatIdUsecase!
-        .execute(currentUser?.uid, widget.userRecp);
+  Future<void> _getChatId() async {
+    List<Chats> chatList =
+        await usecaseConfig.getChatsUsecase!.execute(widget.userRecp);
+    if (chatList.isNotEmpty) {
+      setState(() {
+        chatId = chatList[0].id;
+        print(chatId);
+      });
+    } else {
+      setState(() {
+        chatId = ''; // Valor predeterminado si no hay chats en la lista
+      });
+    }
+  }
 
-    if (id != null) {
-      final messages = await usecaseConfig.getMessageUseCase!.execute(id);
+  Future<void> _loadMessages() async {
+    if (chatId.isNotEmpty) {
+      final messages = await usecaseConfig.getMessageUseCase!.execute(chatId);
     } else {
       print("no hay nada para mostrar");
     }
-
-    // print(messages);
-    setState(() {
-      // _messages = messages
-      //     .map((message) =>
-      //         Message(type: message.type, content: message.content))
-      //     .toList();
-    });
   }
 
   Future<void> _selectImage() async {
@@ -154,10 +162,8 @@ class _HomePageState extends State<PageChat> with TickerProviderStateMixin {
 
   Future<void> _sendMessage(MessageType messageType, String videoUrl) async {
     print("print aqui");
-    // final text = _textController.text;
     MessageType messageType =
         MessageType.text; // Valor predeterminado o tipo de mensaje
-
     if (_selectedImage != null) {
       messageType = MessageType.image;
       // Enviar imagen
@@ -179,15 +185,24 @@ class _HomePageState extends State<PageChat> with TickerProviderStateMixin {
       // Enviar mensaje de texto
       // ...
     }
-    await usecaseConfig.createChatsUsecase!
+    List<ChatModel> chatList = await usecaseConfig.createChatsUsecase!
         .execute(currentUser?.uid, widget.userRecp);
 
-    // Crear el objeto del mensaje con los datos necesarios
-    final chatId = await usecaseConfig.getChatIdUsecase!
-        .execute(currentUser?.uid, widget.userRecp);
+    for (var chat in chatList) {
+      String id = chat.id;
+      String userEmisorId = chat.userEmisorId;
+      String userReceptorId = chat.userReceptorId;
+      Map<String, dynamic> messages = chat.messages;
 
-    await usecaseConfig.sendMessageUsecase!
-        .execute(chatId!, videoUrl, messageType.intValue, currentUser!.uid);
+      // Hacer algo con los datos de cada chat
+      // Por ejemplo, imprimirlos
+      print('ID del chat: $id');
+      print('ID del usuario emisor: $userEmisorId');
+      print('ID del usuario receptor: $userReceptorId');
+      print('Mensajes: $messages');
+      await usecaseConfig.sendMessageUsecase!
+          .execute(id, videoUrl, messageType.intValue, currentUser!.uid);
+    }
 
     _textController.clear();
     _loadMessages();
@@ -274,14 +289,8 @@ class _HomePageState extends State<PageChat> with TickerProviderStateMixin {
                           final message = chat[messageId];
                           final content = message['content'];
                           final type = message['type'];
-                          final isEmisor =
-                              currentUser!.uid == messages[item].userEmisorId;
-
-                          // Establecer el alineamiento del MessageBubble
-                          final alignment = isEmisor
-                              ? Alignment.centerLeft
-                              : Alignment.centerRight;
-
+                          final uid = message['userId'];
+                          final isEmisor = currentUser!.uid == uid;
                           return Message(
                             text: message['type'] == 0 ? content : '',
                             typeimage: message['type'] == 1 ? content : '',
@@ -307,7 +316,10 @@ class _HomePageState extends State<PageChat> with TickerProviderStateMixin {
                         controller: _textController,
                         decoration: InputDecoration(
                           filled: true,
-                          fillColor: DarkModeColors.textfill,
+                          fillColor:
+                              Theme.of(context).brightness == Brightness.dark
+                                  ? DarkModeColors.textfill
+                                  : LightModeColors.textbubble,
                           hintText: 'Escribe un mensaje...',
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(16),
@@ -407,10 +419,3 @@ class _HomePageState extends State<PageChat> with TickerProviderStateMixin {
     );
   }
 }
-
-
-  // tabController.addListener(() {
-    //   context
-    //       .read<UsersBloc>()
-    //       .add(HomeNavegation(id: widget.user.id, index: tabController.index));
-    // });

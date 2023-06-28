@@ -6,16 +6,13 @@ import 'package:path_provider/path_provider.dart';
 
 import 'package:app_mensajeria/features/message/users/domain/entities/users.dart'
     as ent;
-import 'package:app_mensajeria/features/message/users/data/models/user_model.dart';
 import 'package:dio/dio.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
-import 'package:flutter/material.dart';
 
 final auth = FirebaseAuth.instance;
 final dio = Dio();
 
-String apiURI = 'https://85c1-190-123-41-228.ngrok-free.app';
+String apiURI = 'https://66e3-187-188-32-68.ngrok-free.app';
 
 Future<File> getImageFileFromAssets() async {
   const String path = "images/default-user.png";
@@ -37,6 +34,7 @@ abstract class UserRemoteDataSource {
   Future<List<ent.User>> getContacts(String id);
   Future<bool> updateProfile(String id, String name, String data, File? img);
   Future<ent.User?> getUser(String id);
+  Future<ent.User?> getFireId(String idFirebase);
 }
 
 class UserRemoteDataSourceImp implements UserRemoteDataSource {
@@ -171,6 +169,25 @@ class UserRemoteDataSourceImp implements UserRemoteDataSource {
   @override
   Future<ent.User?> getUser(String id) async {
     final response = await dio.get("$apiURI/users/$id");
+
+    if (response.statusCode == 200) {
+      return (ent.User(
+          id: response.data['id'].toString().toString(),
+          name: response.data['name'].toString(),
+          data: response.data['data'].toString(),
+          img: response.data['img'].toString(),
+          firebaseId: response.data['firebaseId'].toString()));
+    }
+
+    return null;
+  }
+
+  @override
+  Future<ent.User?> getFireId(String idFirebase) async {
+    FormData formData = FormData.fromMap({
+      "firebaseId": idFirebase,
+    });
+    final response = await dio.get("$apiURI/users/fire/", data: formData);
 
     if (response.statusCode == 200) {
       return (ent.User(

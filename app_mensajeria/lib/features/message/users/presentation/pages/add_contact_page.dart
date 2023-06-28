@@ -100,7 +100,7 @@ class _AddContactPageState extends State<AddContactPage> {
                                   height:
                                       MediaQuery.of(context).size.height * 0.08,
                                   child: OutlinedButton(
-                                      onPressed: () => {
+                                      onPressed: () => {        //es el id del usuario no registrado ?
                                             context.read<UsersBloc>().add(AddContact(id: widget.id, email: emailController.text))
                                           },
                                       style: OutlinedButton.styleFrom(

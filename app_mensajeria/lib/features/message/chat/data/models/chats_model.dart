@@ -3,11 +3,13 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 class ChatModel extends Chats {
   ChatModel({
+    required String id,
     required String userEmisorId,
     required String userReceptorId,
    
     required Map<String, dynamic> messages,
   }) : super(
+          id: id,
           userEmisorId: userEmisorId,
           userReceptorId: userReceptorId,
           messages: messages,
@@ -15,6 +17,7 @@ class ChatModel extends Chats {
 
   factory ChatModel.fromJson(Map<String, dynamic> json) {
     return ChatModel(
+      id: json["id"],
       userEmisorId: json['userEmisorId'],
       userReceptorId: json['userReceptorId'],
       
@@ -24,24 +27,21 @@ class ChatModel extends Chats {
 
   factory ChatModel.fromEntity(Chats chats) {
     return ChatModel(
+      id: chats.id,
       userEmisorId:
           chats.userEmisorId, // Establece el ID del emisor correctamente
       userReceptorId:
           chats.userReceptorId, // Establece el ID del receptor correctamente
-      messages: chats
-          .messages, // Puedes establecer mensajes vacíos o manejarlos de otra manera
-    
+      messages: chats.messages,
     );
   }
 
   Map<String, dynamic> toJson() {
     return {
-      // 'userId': userId,
+      'id': id,
       'userEmisorId': userEmisorId,
       'userReceptorId': userReceptorId,
       'messages': messages,
-      // 'timestamp': timestamp,
-      // 'type': type
     };
   }
 
@@ -55,6 +55,7 @@ class ChatModel extends Chats {
     }
 
     return ChatModel(
+      id: data['id'],
       userEmisorId: data['userEmisorId'],
       userReceptorId: data['userReceptorId'],
       messages: messages.isNotEmpty ? messages.first : {},
@@ -77,30 +78,4 @@ class ChatModel extends Chats {
         return MessageType.unknown;
     }
   }
-
-
-  // factory ChatModel.fromDocument(DocumentSnapshot doc) {
-  //   final data = doc.data() as Map<String, dynamic>;
-  //   // print(data);
-  //   // return data;
-  //   // final String messagesData = data['messages'];
-  //   final List<dynamic>? messagesData = data['messages'];
-
-  //   List<String> messages = [];
-  //   if (messagesData != null) {
-  //     messages = messagesData.map((message) => message.toString()).toList();
-  //   }
-
-  //   return ChatModel(
-  //     // userId: doc.id,
-  //     // userId: data  ['userId'],
-  //     userEmisorId: data['userEmisorId'],
-  //     userReceptorId: data['userReceptorId'],
-  //     messages: messages,
-  //     // // timestamp: data['timestamp'],
-  //     // type: data['type'] != null
-  //     //     ? _mapIntToMessageType(data['type'] as int)
-  //     //     : MessageType.unknown,
-  //   );
-  // }
 }

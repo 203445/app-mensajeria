@@ -1,3 +1,5 @@
+import 'dart:core';
+
 import 'package:app_mensajeria/features/message/users/presentation/bloc/users_bloc.dart';
 import 'package:app_mensajeria/features/message/users/presentation/pages/create_profile.page.dart';
 import 'package:app_mensajeria/features/message/users/presentation/widgets/error_view.dart';
@@ -17,6 +19,8 @@ class _LoginPageState extends State<LoginPage> {
   final _formKey = GlobalKey<FormState>();
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
+  final emailRegex = r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$';
+  final passwordRegex = r'^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$';
 
   @override
   Widget build(BuildContext context) {
@@ -120,6 +124,15 @@ class _LoginPageState extends State<LoginPage> {
                                             ),
                                           ),
                                           style: const TextStyle(fontSize: 18),
+                                          validator: (value) {
+                                            if (value!.isEmpty) {
+                                              return 'Por favor, ingresa un correo electrónico';
+                                            } else if (!RegExp(emailRegex)
+                                                .hasMatch(value)) {
+                                              return 'Ingresa un correo electrónico válido';
+                                            }
+                                            return null;
+                                          },
                                         ),
                                         TextFormField(
                                           controller: passwordController,
@@ -139,6 +152,15 @@ class _LoginPageState extends State<LoginPage> {
                                           ),
                                           style: const TextStyle(fontSize: 18),
                                           obscureText: true,
+                                          validator: (value) {
+                                            if (value!.isEmpty) {
+                                              return 'Por favor, ingresa una contraseña';
+                                            } else if (!RegExp(passwordRegex)
+                                                .hasMatch(value)) {
+                                              return 'La contraseña debe tener al menos 8 caracteres, una letra y un número';
+                                            }
+                                            return null;
+                                          },
                                         ),
                                       ],
                                     )),
@@ -149,9 +171,11 @@ class _LoginPageState extends State<LoginPage> {
                               height: MediaQuery.of(context).size.height * 0.08,
                               child: OutlinedButton(
                                   onPressed: () {
-                                    context.read<UsersBloc>().add(Register(
+                                    if (_formKey.currentState!.validate()) {
+                                      context.read<UsersBloc>().add(Register(
                                         email: emailController.text,
                                         password: passwordController.text));
+                                    }   
                                   },
                                   style: OutlinedButton.styleFrom(
                                       shape: RoundedRectangleBorder(

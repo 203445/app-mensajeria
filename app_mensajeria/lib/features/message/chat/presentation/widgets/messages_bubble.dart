@@ -26,13 +26,27 @@ class Message extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    Color getChatBubbleColor(BuildContext context, bool isCurrentUser) {
+      final theme = Theme.of(context).brightness;
+
+      if (theme == Brightness.dark) {
+        return isCurrentUser
+            ? DarkModeColors.accentColor
+            : DarkModeColors.textfill;
+      } else {
+        return isCurrentUser
+            ? LightModeColors.accentColor
+            : LightModeColors.textColor;
+      }
+    }
+
     return Row(
       mainAxisAlignment:
           isCurrentUser ? MainAxisAlignment.end : MainAxisAlignment.start,
       children: [
         Flexible(
           child: Container(
-            margin: EdgeInsets.only(right: 15),
+            margin: const EdgeInsets.only(right: 15, left: 15),
             child: Column(
               crossAxisAlignment: isCurrentUser
                   ? CrossAxisAlignment.end
@@ -41,10 +55,11 @@ class Message extends StatelessWidget {
                 const SizedBox(height: 10),
                 if (text.isNotEmpty)
                   Container(
-                    padding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 20, vertical: 15),
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(15.0),
-                      color: DarkModeColors.accentColor,
+                      color: getChatBubbleColor(context, isCurrentUser),
                     ),
                     child: Text(
                       text,
@@ -74,7 +89,7 @@ class Message extends StatelessWidget {
                       width: 180,
                       height: 140,
                       child: Image.network(
-                        typeimage!,
+                        typegif,
                         fit: BoxFit.cover,
                         loadingBuilder: (BuildContext context, Widget child,
                             ImageChunkEvent? loadingProgress) {

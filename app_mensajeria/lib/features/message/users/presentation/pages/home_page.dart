@@ -11,11 +11,7 @@ import 'package:flutter/material.dart';
 import 'package:app_mensajeria/styles.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../../../../../main.dart';
-import '../../../chat/domain/entities/chats.dart';
-
 /// AQUI DEBO HACER UN GET ID DEPENDIENDO A LOS CHATS DEL USUARIO
-
 class HomePage extends StatefulWidget {
   final User user;
   const HomePage({Key? key, required this.user}) : super(key: key);
@@ -38,6 +34,8 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     Future<bool> onWillPop() async {
       return false;
     }
+
+    // hacer una función que valide el usuario que debe ir en el chat para mandar a traer sus datos
 
     return WillPopScope(
       onWillPop: onWillPop,
@@ -76,17 +74,18 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(20),
                   color: Theme.of(context).brightness == Brightness.dark
-                              ? DarkModeColors.detailColor
-                              : LightModeColors.detailColor,
+                      ? DarkModeColors.detailColor
+                      : LightModeColors.detailColor,
                 ),
                 width: MediaQuery.of(context).size.width * 0.515,
                 height: MediaQuery.of(context).size.height * 0.045,
                 child: Padding(
                   padding: const EdgeInsets.all(1),
                   child: TabBar(
-                      labelColor: Theme.of(context).brightness == Brightness.dark
-                          ? DarkModeColors.textColorTitles
-                          : LightModeColors.textColorTitles,
+                      labelColor:
+                          Theme.of(context).brightness == Brightness.dark
+                              ? DarkModeColors.textColorTitles
+                              : LightModeColors.textColorTitles,
                       unselectedLabelColor:
                           Theme.of(context).brightness == Brightness.dark
                               ? DarkModeColors.textColor
@@ -95,13 +94,9 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                       indicator: BoxDecoration(
                         borderRadius: BorderRadius.circular(20),
                         color: Theme.of(context).brightness == Brightness.dark
-                          ? DarkModeColors.accentColor
-                          : LightModeColors.accentColor,
+                            ? DarkModeColors.accentColor
+                            : LightModeColors.accentColor,
                       ),
-                      // indicatorColor:
-                      //     Theme.of(context).brightness == Brightness.dark
-                      //         ? DarkModeColors.accentColor
-                      //         : LightModeColors.accentColor,
                       tabs: const [
                         Tab(
                           text: "Chats",
@@ -124,53 +119,77 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                 state is LoadedPage ||
                 state is UserCreated ||
                 state is UserEdited) {
-              return Padding(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
-                child: SizedBox(
-                    width: double.infinity,
-                    height: MediaQuery.of(context).size.height,
-                    child: TabBarView(
-                      controller: tabController,
-                      children: [
-                        ChatsList(userFire: widget.user.firebaseId,),
-                        //AGREGAR COMPONENTE DE VISTA DE CHATS
-                        SizedBox(
-                          width: double.infinity,
-                          height: MediaQuery.of(context).size.height,
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              ContactsList(widget.user.firebaseId),
-                              Align(
-                                alignment: Alignment.bottomRight,
-                                child: FloatingActionButton(
-                                  onPressed: () {
-                                    Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                            builder: (context) =>
-                                                AddContactPage(
-                                                  id: widget.user.id,
-                                                )));
-                                  },
-                                  backgroundColor:
-                                      Theme.of(context).brightness ==
-                                              Brightness.dark
-                                          ? DarkModeColors.accentColor
-                                          : LightModeColors.accentColor,
-                                  child: const Icon(
-                                    Icons.add,
-                                    color: Colors.white,
+              if (state is LoadedContacts) {
+                final contacts = (state).contacts;
+                return Padding(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+                  child: SizedBox(
+                      width: double.infinity,
+                      height: MediaQuery.of(context).size.height,
+                      child: TabBarView(
+                        controller: tabController,
+                        children: [
+                          ListView(
+                            children: contacts.map((contact) {
+                              print(contact.name);
+                              return Padding(
+                                padding: const EdgeInsets.only(bottom: 4),
+                                child: ChatsList(
+                                  userFire: widget.user.firebaseId,
+                                  name: contact.name,
+                                  data: contact.data,
+                                  img: contact.img,
+                                  userRecp: contact.firebaseId,
+                                ),
+                              );
+                            }).toList(),
+                          ),
+
+                          // validación si existe  el chat y enviar los datos, img, data, username
+
+                          //AGREGAR COMPONENTE DE VISTA DE CHATS
+                          SizedBox(
+                            width: double.infinity,
+                            height: MediaQuery.of(context).size.height,
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                ContactsList(),
+                                Align(
+                                  alignment: Alignment.bottomRight,
+                                  child: FloatingActionButton(
+                                    onPressed: () {
+                                      Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) =>
+                                                  AddContactPage(
+                                                    id: widget.user.id,
+                                                  )));
+                                    },
+                                    backgroundColor:
+                                        Theme.of(context).brightness ==
+                                                Brightness.dark
+                                            ? DarkModeColors.accentColor
+                                            : LightModeColors.accentColor,
+                                    child: const Icon(
+                                      Icons.add,
+                                      color: Colors.white,
+                                    ),
                                   ),
                                 ),
-                              ),
-                            ],
+                              ],
+                            ),
                           ),
-                        ),
-                      ],
-                    )),
-              );
+                        ],
+                      )),
+                );
+              } else if (state is Error) {
+                return const ErrorView();
+              } else {
+                return Container();
+              }
             } else if (state is Error) {
               return const ErrorView();
             } else {
