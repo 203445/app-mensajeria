@@ -16,7 +16,7 @@ class ContactsList extends StatefulWidget {
 }
 
 class _ContactsListState extends State<ContactsList> {
-  String apiURI = 'https://66e3-187-188-32-68.ngrok-free.app';
+  String apiURI = 'https://3528-187-188-32-68.ngrok-free.app';
 
   @override
   void initState() {

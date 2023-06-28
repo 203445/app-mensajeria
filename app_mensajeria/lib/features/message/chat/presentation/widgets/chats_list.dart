@@ -4,7 +4,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 import '../../../../../styles.dart';
-import '../../data/models/chats_model.dart';
 import '../../domain/entities/chats.dart';
 
 class ChatsList extends StatefulWidget {
@@ -27,7 +26,7 @@ class ChatsList extends StatefulWidget {
 }
 
 class _ChatsListState extends State<ChatsList> {
-  String apiURI = 'https://66e3-187-188-32-68.ngrok-free.app';
+  String apiURI = 'https://3528-187-188-32-68.ngrok-free.app';
   final UsecaseConfig usecaseConfig = UsecaseConfig();
   final User? currentUser = FirebaseAuth.instance.currentUser;
 

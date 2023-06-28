@@ -173,9 +173,9 @@ class _LoginPageState extends State<LoginPage> {
                                   onPressed: () {
                                     if (_formKey.currentState!.validate()) {
                                       context.read<UsersBloc>().add(Register(
-                                        email: emailController.text,
-                                        password: passwordController.text));
-                                    }   
+                                          email: emailController.text,
+                                          password: passwordController.text));
+                                    }
                                   },
                                   style: OutlinedButton.styleFrom(
                                       shape: RoundedRectangleBorder(

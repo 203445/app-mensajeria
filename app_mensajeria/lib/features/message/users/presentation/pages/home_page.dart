@@ -1,4 +1,3 @@
-import 'package:app_mensajeria/features/message/chat/presentation/pages/chat_defaul.dart';
 import 'package:app_mensajeria/features/message/chat/presentation/widgets/chats_list.dart';
 import 'package:app_mensajeria/features/message/users/domain/entities/users.dart';
 import 'package:app_mensajeria/features/message/users/presentation/bloc/users_bloc.dart';
@@ -34,9 +33,6 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     Future<bool> onWillPop() async {
       return false;
     }
-
-    // hacer una función que valide el usuario que debe ir en el chat para mandar a traer sus datos
-
     return WillPopScope(
       onWillPop: onWillPop,
       child: Scaffold(
@@ -145,10 +141,6 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                               );
                             }).toList(),
                           ),
-
-                          // validación si existe  el chat y enviar los datos, img, data, username
-
-                          //AGREGAR COMPONENTE DE VISTA DE CHATS
                           SizedBox(
                             width: double.infinity,
                             height: MediaQuery.of(context).size.height,

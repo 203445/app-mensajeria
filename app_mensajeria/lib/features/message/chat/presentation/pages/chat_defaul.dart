@@ -9,8 +9,6 @@ import 'package:file_picker/file_picker.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:app_mensajeria/styles.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-
 import '../../data/models/chats_model.dart';
 
 class PageChat extends StatefulWidget {
@@ -161,7 +159,6 @@ class _HomePageState extends State<PageChat> with TickerProviderStateMixin {
   }
 
   Future<void> _sendMessage(MessageType messageType, String videoUrl) async {
-    print("print aqui");
     MessageType messageType =
         MessageType.text; // Valor predeterminado o tipo de mensaje
     if (_selectedImage != null) {
@@ -190,16 +187,7 @@ class _HomePageState extends State<PageChat> with TickerProviderStateMixin {
 
     for (var chat in chatList) {
       String id = chat.id;
-      String userEmisorId = chat.userEmisorId;
-      String userReceptorId = chat.userReceptorId;
-      Map<String, dynamic> messages = chat.messages;
 
-      // Hacer algo con los datos de cada chat
-      // Por ejemplo, imprimirlos
-      print('ID del chat: $id');
-      print('ID del usuario emisor: $userEmisorId');
-      print('ID del usuario receptor: $userReceptorId');
-      print('Mensajes: $messages');
       await usecaseConfig.sendMessageUsecase!
           .execute(id, videoUrl, messageType.intValue, currentUser!.uid);
     }
@@ -288,7 +276,6 @@ class _HomePageState extends State<PageChat> with TickerProviderStateMixin {
                               .toList()[0]; // Obtener el ID del mensaje
                           final message = chat[messageId];
                           final content = message['content'];
-                          final type = message['type'];
                           final uid = message['userId'];
                           final isEmisor = currentUser!.uid == uid;
                           return Message(
@@ -298,7 +285,6 @@ class _HomePageState extends State<PageChat> with TickerProviderStateMixin {
                             typeaudio: message['type'] == 2 ? content : '',
                             typegif: message['type'] == 4 ? content : '',
                             isCurrentUser: isEmisor,
-                            // alignment: alignment,
                           );
                         },
                       );
@@ -378,8 +364,12 @@ class _HomePageState extends State<PageChat> with TickerProviderStateMixin {
                                     icon: SvgPicture.asset(
                                       'assets/icons/gif_icons.svg', // Ruta del archivo SVG del icono de GIF
                                       width:
-                                          15, // Ajusta el tamaño del icono según tus necesidades
-                                      height: 15,
+                                          250, // Ajusta el tamaño del icono según tus necesidades
+                                      height: 250,
+                                      color: Theme.of(context).brightness ==
+                                              Brightness.dark
+                                          ? DarkModeColors.textColorTitles
+                                          : LightModeColors.textColorTitles,
                                     ),
                                   ),
                                 ],

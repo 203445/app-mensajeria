@@ -1,6 +1,4 @@
 import 'dart:io';
-
-import 'package:app_mensajeria/features/message/users/data/models/user_model.dart';
 import 'package:app_mensajeria/features/message/users/domain/repositories/user_repository.dart';
 import 'package:app_mensajeria/features/message/users/domain/entities/users.dart';
 import 'package:app_mensajeria/features/message/users/data/datasources/user_remote.dart';
