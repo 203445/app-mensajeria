@@ -10,6 +10,7 @@ class Message extends StatelessWidget {
   final String typevideo;
   final String typeaudio;
   final String typegif;
+  final String typepdf;
   final bool isCurrentUser;
 
   Message(
@@ -19,6 +20,7 @@ class Message extends StatelessWidget {
       required this.typevideo,
       required this.typeaudio,
       required this.typegif,
+      required this.typepdf,
       required this.isCurrentUser});
 
   final player = AudioPlayer();

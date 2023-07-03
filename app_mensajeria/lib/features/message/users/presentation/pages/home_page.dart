@@ -10,7 +10,7 @@ import 'package:flutter/material.dart';
 import 'package:app_mensajeria/styles.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-/// AQUI DEBO HACER UN GET ID DEPENDIENDO A LOS CHATS DEL USUARIO
+
 class HomePage extends StatefulWidget {
   final User user;
   const HomePage({Key? key, required this.user}) : super(key: key);

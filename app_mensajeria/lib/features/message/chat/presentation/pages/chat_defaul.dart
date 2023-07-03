@@ -38,6 +38,7 @@ class _HomePageState extends State<PageChat> with TickerProviderStateMixin {
   File? _selectedVideo;
   File? _selectedAudio;
   File? _selectedGif;
+  File? _selectedPdf;
   late String chatId = '';
 
   @override
@@ -63,6 +64,7 @@ class _HomePageState extends State<PageChat> with TickerProviderStateMixin {
       });
     } else {
       setState(() {
+        print("AQUI");
         chatId = ''; // Valor predeterminado si no hay chats en la lista
       });
     }
@@ -71,6 +73,7 @@ class _HomePageState extends State<PageChat> with TickerProviderStateMixin {
   Future<void> _loadMessages() async {
     if (chatId.isNotEmpty) {
       final messages = await usecaseConfig.getMessageUseCase!.execute(chatId);
+      print(messages);
     } else {
       print("no hay nada para mostrar");
     }
@@ -158,6 +161,28 @@ class _HomePageState extends State<PageChat> with TickerProviderStateMixin {
     }
   }
 
+  Future<void> _selectPdf() async {
+    FilePickerResult? result = await FilePicker.platform.pickFiles(
+      type: FileType.custom,
+      allowedExtensions: ['pdf'],
+    );
+
+    if (result != null) {
+      _selectedPdf = File(result.files.single.path!);
+      String pdfPath = result.files.single.path!;
+      String pdfUrl = await usecaseConfig.uploadMediaUseCase!
+          .execute('pdfs/${result.files.single.name}', File(pdfPath));
+      print(pdfUrl);
+
+      MessageType messageType = MessageType.pdf;
+      _sendMessage(messageType, pdfUrl);
+
+      setState(() {
+        _selectedGif = File(pdfPath);
+      });
+    }
+  }
+
   Future<void> _sendMessage(MessageType messageType, String videoUrl) async {
     MessageType messageType =
         MessageType.text; // Valor predeterminado o tipo de mensaje
@@ -176,6 +201,10 @@ class _HomePageState extends State<PageChat> with TickerProviderStateMixin {
     } else if (_selectedGif != null) {
       messageType = MessageType.gif;
       // Enviar GIF
+      // ...
+    } else if (_selectedPdf != null) {
+      messageType = MessageType.pdf;
+      // Enviar PDF
       // ...
     } else {
       messageType = MessageType.text;
@@ -284,6 +313,7 @@ class _HomePageState extends State<PageChat> with TickerProviderStateMixin {
                             typevideo: message['type'] == 3 ? content : '',
                             typeaudio: message['type'] == 2 ? content : '',
                             typegif: message['type'] == 4 ? content : '',
+                            typepdf: message['type'] == 5 ? content : '',
                             isCurrentUser: isEmisor,
                           );
                         },
@@ -351,6 +381,17 @@ class _HomePageState extends State<PageChat> with TickerProviderStateMixin {
                                   IconButton(
                                     onPressed: _selectAudio,
                                     icon: Icon(Icons.music_note),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            PopupMenuItem<String>(
+                              value: 'pdf',
+                              child: Row(
+                                children: [
+                                  IconButton(
+                                    onPressed: _selectPdf,
+                                    icon: Icon(Icons.file_copy),
                                   ),
                                 ],
                               ),
