@@ -3,6 +3,7 @@ import 'package:app_mensajeria/features/message/chat/presentation/widgets/video_
 import 'package:app_mensajeria/styles.dart';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
+import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
 
 class Message extends StatelessWidget {
   final String text;
@@ -25,7 +26,7 @@ class Message extends StatelessWidget {
 
   final player = AudioPlayer();
   bool isPlaying = false;
-
+  final GlobalKey<SfPdfViewerState> pdfViewerKey = GlobalKey();
   @override
   Widget build(BuildContext context) {
     Color getChatBubbleColor(BuildContext context, bool isCurrentUser) {
@@ -115,6 +116,15 @@ class Message extends StatelessWidget {
                 if (typeaudio != '')
                   AudioMessage(
                     audioUrl: typeaudio,
+                  ),
+                if (typepdf.isNotEmpty)
+                  Container(
+                    width: 180,
+                    height: 140,
+                    child: SfPdfViewer.network(
+                      typepdf,
+                      key: pdfViewerKey,
+                    ),
                   ),
               ],
             ),

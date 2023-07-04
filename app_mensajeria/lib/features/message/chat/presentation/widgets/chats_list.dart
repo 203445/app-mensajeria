@@ -26,7 +26,7 @@ class ChatsList extends StatefulWidget {
 }
 
 class _ChatsListState extends State<ChatsList> {
-  String apiURI = 'https://8c9b-189-129-148-193.ngrok-free.app';
+  String apiURI = 'https://3373-187-188-32-68.ngrok-free.app';
   final UsecaseConfig usecaseConfig = UsecaseConfig();
   final User? currentUser = FirebaseAuth.instance.currentUser;
 
@@ -233,6 +233,10 @@ class _ChatsListState extends State<ChatsList> {
     } else if (type == '2') {
       // Mensaje de audio
       return const Text("Audio",
+          style: TextStyle(fontSize: 15, fontWeight: FontWeight.w300));
+    } else if (type == '5') {
+      // Mensaje de audio
+      return const Text("Archivo",
           style: TextStyle(fontSize: 15, fontWeight: FontWeight.w300));
     } else {
       // Tipo de mensaje desconocido

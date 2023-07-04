@@ -227,6 +227,7 @@ class _HomePageState extends State<PageChat> with TickerProviderStateMixin {
       _selectedImage = null;
       _selectedVideo = null;
       _selectedAudio = null;
+      _selectedPdf = null;
     });
   }
 

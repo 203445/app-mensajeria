@@ -16,7 +16,7 @@ class ContactsList extends StatefulWidget {
 }
 
 class _ContactsListState extends State<ContactsList> {
-  String apiURI = 'https://8c9b-189-129-148-193.ngrok-free.app';
+  String apiURI = 'https://3373-187-188-32-68.ngrok-free.app';
 
   @override
   void initState() {
@@ -129,7 +129,6 @@ class _ContactsListState extends State<ContactsList> {
                                             img: state.contacts[index].img,
                                             userRecp: state
                                                 .contacts[index].firebaseId,
-                                          
                                           )));
                             },
                           ),
