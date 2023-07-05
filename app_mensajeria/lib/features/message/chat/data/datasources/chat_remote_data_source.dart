@@ -28,7 +28,7 @@ class ChatRemoteDataSourceImp implements ChatRemoteDataSource {
     List<ChatModel> chatsList = [];
     for (var doc in snapshot.docs) {
       final data = doc.data() as Map<String, dynamic>;
-      final List<dynamic>? messagesData = data['messages'];
+      final dynamic messagesData = data['messages'];
 
       String lastMessageContent = '';
       String lastMessageTimestamp = '';
@@ -39,6 +39,10 @@ class ChatRemoteDataSourceImp implements ChatRemoteDataSource {
         lastMessageContent = lastMessage['content'] ?? '';
         lastMessageTimestamp = lastMessage['timestamp'] ?? '';
         type = lastMessage['type'].toString() ?? '';
+      } else if (messagesData is Map<String, dynamic>) {
+        lastMessageContent = messagesData['content'] ?? '';
+        lastMessageTimestamp = messagesData['timestamp'] ?? '';
+        type = messagesData['type'].toString() ?? '';
       }
 
       final userEmisorId = data['userEmisorId'];

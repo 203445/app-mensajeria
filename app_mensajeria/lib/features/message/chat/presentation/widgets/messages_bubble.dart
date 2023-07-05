@@ -1,8 +1,10 @@
 import 'package:app_mensajeria/features/message/chat/presentation/widgets/audio_message.dart';
+import 'package:app_mensajeria/features/message/chat/presentation/widgets/pdf_view.dart';
 import 'package:app_mensajeria/features/message/chat/presentation/widgets/video_message.dart';
 import 'package:app_mensajeria/styles.dart';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
 
 class Message extends StatelessWidget {
@@ -118,13 +120,28 @@ class Message extends StatelessWidget {
                     audioUrl: typeaudio,
                   ),
                 if (typepdf.isNotEmpty)
-                  Container(
-                    width: 180,
-                    height: 140,
-                    child: SfPdfViewer.network(
-                      typepdf,
-                      key: pdfViewerKey,
-                    ),
+                  Column(
+                    children: [
+                      Container(
+                        width: 200,
+                        height: 140,
+                        child: SfPdfViewer.network(
+                          typepdf,
+                          key: pdfViewerKey,
+                          initialScrollOffset: Offset.zero,
+                        ),
+                      ),
+                      ElevatedButton(
+                        onPressed: () async {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => PDFview(name: typepdf),
+                              ));
+                        },
+                        child: Text('Abrir PDF'),
+                      ),
+                    ],
                   ),
               ],
             ),
