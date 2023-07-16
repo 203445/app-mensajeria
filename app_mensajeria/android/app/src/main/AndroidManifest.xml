@@ -4,6 +4,8 @@
         android:label="app_mensajeria"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
+        <meta-data android:name="com.google.android.geo.API_KEY"
+            android:value="AIzaSyCxzqSLt4yq4tMYtsc571YuKxcA-64qZjs"/>
         <activity
             android:name=".MainActivity"
             android:exported="true"
