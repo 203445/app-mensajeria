@@ -1,8 +1,8 @@
-import 'package:app_mensajeria/features/message/users/presentation/pages/login_page.dart';
 import 'package:app_mensajeria/features/message/users/presentation/pages/splash.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'features/message/users/presentation/bloc/users_bloc.dart';
+import 'package:flutter_config_plus/flutter_config_plus.dart';
 import 'firebase_options.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:app_mensajeria/usecase_config.dart';
@@ -11,6 +11,7 @@ UsecaseConfig usecaseConfig = UsecaseConfig();
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  //await FlutterConfigPlus.loadEnvVariables();
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );

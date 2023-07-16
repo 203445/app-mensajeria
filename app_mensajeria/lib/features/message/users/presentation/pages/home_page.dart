@@ -41,12 +41,12 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                 ? DarkModeColors.backgroundColor
                 : LightModeColors.backgroundColor,
             elevation: 0,
-            toolbarHeight: 165,
+            toolbarHeight: 170,
             automaticallyImplyLeading: false,
             title: AppBarWidget(user: widget.user),
             actions: <Widget>[
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 25),
+                padding: const EdgeInsets.only(right: 20),
                 child: IconButton(
                   icon: const Icon(Icons.edit),
                   iconSize: 22,

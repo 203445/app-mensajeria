@@ -11,14 +11,15 @@ class AppBarWidget extends StatefulWidget {
 }
 
 class _AppBarWidgetState extends State<AppBarWidget> {
-  final String apiURI = 'https://a60e-187-188-32-68.ngrok-free.app';
+  final String apiURI = 'https://77d5-2806-2f0-8161-f0b5-e03c-cf12-7740-c852.ngrok-free.app';
 
   @override
   Widget build(BuildContext context) {
     return Padding(
         padding: const EdgeInsets.symmetric(horizontal: 23),
         child: SizedBox(
-          width: MediaQuery.of(context).size.width * 0.55,
+          //height: MediaQuery.of(context).size.height * 0.35,
+          width: MediaQuery.of(context).size.width * 1,
           child: Row(
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
@@ -31,29 +32,41 @@ class _AppBarWidgetState extends State<AppBarWidget> {
                 ),
               ),
               SizedBox(
-                height: MediaQuery.of(context).size.width * 0.12,
+                height: MediaQuery.of(context).size.width * 0.15,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text(
-                      widget.user.name,
-                      style: TextStyle(
-                        fontSize: 25,
-                        fontWeight: FontWeight.w700,
-                        color: Theme.of(context).brightness == Brightness.dark
-                            ? DarkModeColors.textColorTitles
-                            : LightModeColors.textColorTitles,
-                      ),
-                    ),
-                    Text(
-                      widget.user.data,
-                      style: TextStyle(
-                          fontSize: 13,
-                          fontWeight: FontWeight.w300,
+                    Container(
+                      width: MediaQuery.of(context).size.width * 0.415,
+                      child: Text(
+                        widget.user.name,
+                        softWrap: false,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(
+                          fontSize: 23,
+                          fontWeight: FontWeight.w700,
                           color: Theme.of(context).brightness == Brightness.dark
                               ? DarkModeColors.textColorTitles
-                              : LightModeColors.textColorTitles),
+                              : LightModeColors.textColorTitles,
+                        ),
+                      ),
+                    ),
+                    Container(
+                      width: MediaQuery.of(context).size.width * 0.415,
+                      child: Text(
+                        widget.user.data,
+                        softWrap: false,
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(
+                            fontSize: 12,
+                            fontWeight: FontWeight.w300,
+                            color: Theme.of(context).brightness == Brightness.dark
+                                ? DarkModeColors.textColorTitles
+                                : LightModeColors.textColorTitles),
+                      ),
                     ),
                   ],
                 ),

@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:app_mensajeria/features/message/chat/domain/entities/chats.dart';
 import 'package:app_mensajeria/features/message/chat/presentation/widgets/app_bar_chat.dart';
+import 'package:app_mensajeria/features/message/chat/presentation/widgets/map_pick.dart';
 import 'package:app_mensajeria/features/message/chat/presentation/widgets/messages_bubble.dart';
 import 'package:app_mensajeria/usecase_config.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -39,6 +40,7 @@ class _HomePageState extends State<PageChat> with TickerProviderStateMixin {
   File? _selectedAudio;
   File? _selectedGif;
   File? _selectedPdf;
+  List<double>? _selectedLocation;
   late String chatId = '';
 
   @override
@@ -183,6 +185,21 @@ class _HomePageState extends State<PageChat> with TickerProviderStateMixin {
     }
   }
 
+  Future<void> _selectLocation() async {
+    final List<double> result = await Navigator.push(context, MaterialPageRoute(builder: (context) => const MapPagePicker()));
+    print("MAPAAAA");
+    print(result[0].toString());
+    if (result.isNotEmpty){
+      setState(() {
+        _selectedLocation = [result[0], result[1]];
+        print(_selectedLocation);
+      });
+
+      MessageType messageType = MessageType.location;
+      _sendMessage(messageType, '${_selectedLocation![0]},${_selectedLocation![1]}');
+    }
+  }
+
   Future<void> _sendMessage(MessageType messageType, String videoUrl) async {
     MessageType messageType =
         MessageType.text; // Valor predeterminado o tipo de mensaje
@@ -204,6 +221,10 @@ class _HomePageState extends State<PageChat> with TickerProviderStateMixin {
       // ...
     } else if (_selectedPdf != null) {
       messageType = MessageType.pdf;
+      // Enviar PDF
+      // ...
+    } else if (_selectedLocation != null) {
+      messageType = MessageType.location;
       // Enviar PDF
       // ...
     } else {
@@ -228,12 +249,13 @@ class _HomePageState extends State<PageChat> with TickerProviderStateMixin {
       _selectedVideo = null;
       _selectedAudio = null;
       _selectedPdf = null;
+      _selectedLocation = null;
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    TabController tabController = TabController(length: 2, vsync: this);
+    //TabController tabController = TabController(length: 2, vsync: this);
     Future<bool> onWillPop() async {
       return false;
     }
@@ -315,6 +337,7 @@ class _HomePageState extends State<PageChat> with TickerProviderStateMixin {
                             typeaudio: message['type'] == 2 ? content : '',
                             typegif: message['type'] == 4 ? content : '',
                             typepdf: message['type'] == 5 ? content : '',
+                            typelocation: message['type'] == 6 ? [double.parse(content.split(',')[0]), double.parse(content.split(',')[1])]: [],
                             isCurrentUser: isEmisor,
                           );
                         },
@@ -393,6 +416,17 @@ class _HomePageState extends State<PageChat> with TickerProviderStateMixin {
                                   IconButton(
                                     onPressed: _selectPdf,
                                     icon: Icon(Icons.file_copy),
+                                  ),
+                                ],
+                              ),
+                            ),
+                             PopupMenuItem<String>(
+                              value: 'location',
+                              child: Row(
+                                children: [
+                                  IconButton(
+                                    onPressed: _selectLocation,
+                                    icon: Icon(Icons.location_pin),
                                   ),
                                 ],
                               ),

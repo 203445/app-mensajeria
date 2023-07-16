@@ -12,7 +12,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 final auth = FirebaseAuth.instance;
 final dio = Dio();
 
-String apiURI = 'https://a60e-187-188-32-68.ngrok-free.app';
+String apiURI = 'https://77d5-2806-2f0-8161-f0b5-e03c-cf12-7740-c852.ngrok-free.app';
 
 Future<File> getImageFileFromAssets() async {
   const String path = "images/default-user.png";

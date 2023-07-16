@@ -5,6 +5,7 @@ enum MessageType {
   video,
   gif,
   pdf,
+  location,
   unknown,
 }
 
@@ -24,6 +25,8 @@ extension MessageTypeExtension on MessageType {
         return 4;
       case MessageType.pdf:
         return 5;
+      case MessageType.location:
+        return 6;
       default:
         return -1;
     }

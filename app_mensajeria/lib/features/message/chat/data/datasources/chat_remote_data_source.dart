@@ -193,6 +193,10 @@ class ChatRemoteDataSourceImp implements ChatRemoteDataSource {
       return 'Audio: $content'; // Mostrar un mensaje indicando que es un audio
     } else if (type == MessageType.video) {
       return 'Video: $content'; // Mostrar un mensaje indicando que es un video
+    } else if (type == MessageType.pdf) {
+      return 'PDF: $content'; // Mostrar un mensaje indicando que es un pdf
+    } else if (type == MessageType.location) {
+      return 'Ubicacion: $content'; // Mostrar un mensaje indicando que es una ubicacion
     } else {
       return 'Mensaje desconocido'; // Mostrar un mensaje por defecto para tipos de mensaje desconocidos
     }
@@ -210,6 +214,10 @@ class ChatRemoteDataSourceImp implements ChatRemoteDataSource {
         return MessageType.audio;
       case 4:
         return MessageType.gif;
+      case 5:
+        return MessageType.pdf;
+      case 6:
+        return MessageType.location;
       default:
         return MessageType.unknown;
     }

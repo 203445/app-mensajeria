@@ -26,7 +26,7 @@ class ChatsList extends StatefulWidget {
 }
 
 class _ChatsListState extends State<ChatsList> {
-  String apiURI = 'https://a60e-187-188-32-68.ngrok-free.app';
+  String apiURI = 'https://77d5-2806-2f0-8161-f0b5-e03c-cf12-7740-c852.ngrok-free.app';
   final UsecaseConfig usecaseConfig = UsecaseConfig();
   final User? currentUser = FirebaseAuth.instance.currentUser;
 

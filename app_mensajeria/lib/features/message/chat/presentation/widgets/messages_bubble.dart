@@ -1,4 +1,5 @@
 import 'package:app_mensajeria/features/message/chat/presentation/widgets/audio_message.dart';
+import 'package:app_mensajeria/features/message/chat/presentation/widgets/location_message.dart';
 import 'package:app_mensajeria/features/message/chat/presentation/widgets/pdf_view.dart';
 import 'package:app_mensajeria/features/message/chat/presentation/widgets/video_message.dart';
 import 'package:app_mensajeria/styles.dart';
@@ -14,6 +15,7 @@ class Message extends StatelessWidget {
   final String typeaudio;
   final String typegif;
   final String typepdf;
+  final List<double> typelocation;
   final bool isCurrentUser;
 
   Message(
@@ -24,6 +26,7 @@ class Message extends StatelessWidget {
       required this.typeaudio,
       required this.typegif,
       required this.typepdf,
+      required this.typelocation,
       required this.isCurrentUser});
 
   final player = AudioPlayer();
@@ -119,6 +122,8 @@ class Message extends StatelessWidget {
                   AudioMessage(
                     audioUrl: typeaudio,
                   ),
+                if (typelocation.isNotEmpty)
+                  LocationMessage(latitude: typelocation[0], longitude: typelocation[1]),
                 if (typepdf.isNotEmpty)
                   Column(
                     children: [

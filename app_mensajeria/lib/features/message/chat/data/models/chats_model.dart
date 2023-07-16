@@ -76,6 +76,8 @@ class ChatModel extends Chats {
         return MessageType.gif;
       case 5:
         return MessageType.pdf;
+      case 6:
+        return MessageType.location;
       default:
         return MessageType.unknown;
     }
